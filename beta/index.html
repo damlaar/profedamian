@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="claude:viewport-fit-sides" content="cover">
-<title>ProfeDamián</title>
+<title>Profe Damián</title>
 <style>
 /* v0.26: lugar de los festejos (motor de animaciones M); no bloquea los toques */
 #festejo { position: fixed; left: 50%; top: 42%; width: min(80vw, 360px); height: min(80vw, 360px); transform: translate(-50%, -50%); pointer-events: none; z-index: 60; }
@@ -1121,19 +1121,59 @@ body:has(#nav-fija:not([hidden])) { scroll-padding-top: 88px; }
 @keyframes accion-aparece { 40% { transform: translateY(-5px); } 70% { transform: translateY(2px); } }
 @media (prefers-reduced-motion: reduce) { .accion-lista { animation: none; } }
 
+/* v0.30: hojas de álbum iguales; el papel vacío también pertenece al libro. */
+.album-paginas.libro { --alto-hoja: 704px; height: var(--alto-hoja); max-width: 800px; margin-inline: auto; }
+.album-paginas.libro .pagina-album, .album-paginas.libro .pagina-album:not(.portada) {
+  height: var(--alto-hoja); min-height: var(--alto-hoja); max-height: var(--alto-hoja);
+  display: flex; flex-direction: column; }
+.album-paginas.libro .pagina-album > h3 { margin: 0; }
+.album-paginas.libro .pagina-album > .sub { margin: 8px 0 16px; }
+.album-paginas.libro .hojas { gap: 12px; }
+.hoja-numero { display: block; margin-top: auto; padding-top: 16px; text-align: center;
+  font: 800 1rem var(--display); color: #5b4933; }
+.fig-numero { position: absolute; top: 3px; left: 5px; font: 800 .65rem var(--body); color: #5b4933;
+  background: #fff5dc; border-radius: 7px; padding: 1px 4px; z-index: 1; }
+.album-pegar { position: sticky; top: 78px; z-index: 15; display: flex; flex-wrap: wrap; align-items: center;
+  justify-content: space-between; gap: 8px; padding: 10px 14px; margin: 10px 0 16px;
+  border: 2px solid var(--line); border-radius: 18px; color: var(--ink); background: var(--surface); box-shadow: var(--lift); }
+.album-pegar p { margin: 0; font-weight: 700; } .album-pegar .acciones { gap: 8px; }
+.album-pegar button { min-height: 44px; padding: 8px 12px; }
+.pegar-resumen { margin-block: 16px; padding: 14px 18px; border: 2px solid var(--gold); border-radius: 18px;
+  background: var(--soft); font-size: .9rem; }
+.pegar-resumen ul { margin: 8px 0 0; padding-left: 20px; }
+.album-paginas .fig-album.nueva { animation: none; }
+.album-paginas .fig-album.pendiente .fig-img { opacity: .18; filter: grayscale(1); }
+.album-paginas .fig-album.pendiente::after { display: none; }
+.album-paginas.libro.en-pegado { touch-action: pan-y; }
+.album-paginas.libro.en-pegado .pagina-album > .hojas { animation: none; }
+.album-paginas.libro .fig-album.pegando { z-index: 5; animation: figurita-vuela .95s cubic-bezier(.2,.65,.3,1) both; }
+.album-paginas .fig-album.pegando .fig-img { opacity: 1; filter: none; }
+.album-paginas .fig-album.pegando::after { content: ''; display: block; position: absolute; inset: 0;
+  pointer-events: none; background: linear-gradient(115deg,transparent 25%,#fff 48%,transparent 70%);
+  animation: pegado-brilla .45s ease .5s both; }
+@keyframes figurita-vuela { from { opacity: 0; transform: translateY(var(--vuelo-y, 300px)) rotate(-24deg) scale(.6); }
+  60% { opacity: 1; transform: translateY(-14px) rotate(7deg) scale(1.04); }
+  80% { transform: translateY(5px) rotate(-3deg) scale(.98); } to { opacity: 1; transform: none; } }
+@keyframes pegado-brilla { from { opacity: 0; transform: translateX(-100%); } 50% { opacity: .8; } to { opacity: 0; transform: translateX(100%); } }
+@media (max-width: 540px) { .album-pegar { font-size: .85rem; padding: 8px; } .album-pegar .acciones { width: 100%; }
+  .album-paginas.libro .hojas { gap: 12px 8px; } }
+@media (prefers-reduced-motion: reduce) {
+  .album-paginas.libro .fig-album.pegando, .album-paginas .fig-album.pegando::after { animation: none; }
+}
+
 </style>
 <link rel="manifest" href="manifest.webmanifest">
 <meta name="theme-color" content="#152724">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-title" content="ProfeDamián">
+<meta name="apple-mobile-web-app-title" content="Profe Damián">
 <link rel="apple-touch-icon" href="icono-180.png">
 <link rel="icon" href="icono-192.png">
 </head>
 <body>
 <div class="app">
   <header>
-    <button class="marca" id="marca" aria-label="Ir al menú principal" title="Ir al menú principal"><span class="logo-retrato"><img id="logo" alt=""></span>ProfeDamián</button>
+    <button class="marca" id="marca" aria-label="Ir al menú principal" title="Ir al menú principal"><span class="logo-retrato"><img id="logo" alt=""></span>Profe Damián</button>
     <nav class="nav-fija" id="nav-fija" aria-label="Navegación" hidden><button class="btn-nav" id="btn-nav-volver" aria-label="Volver" title="Volver"><span aria-hidden="true">←</span><small>Volver</small></button><button class="btn-nav" id="btn-nav-menu" aria-label="Menú principal" title="Menú principal"><span aria-hidden="true">⌂</span><small>Menú</small></button></nav>
     <div class="cabecera-der"><button class="btn-ayuda" id="btn-ayuda" aria-label="Ayuda" title="Ayuda">?</button>
     <div class="quien" id="caja-quien" hidden><button class="perfil-btn" id="btn-perfil" aria-label="Mi perfil"><span class="avatar-mini" id="avatar-mini"></span><b id="quien-nombre"></b></button><span class="monedero" id="monedero" role="status" aria-live="polite" aria-atomic="true"><svg class="moneda" viewBox="0 0 48 48" aria-hidden="true"><circle cx="24" cy="25" r="21" fill="#b36b16"/><circle cx="24" cy="22" r="20" fill="#ffce53" stroke="#75420c" stroke-width="2"/><circle cx="24" cy="22" r="14" fill="#f2ab25" stroke="#ffe69b" stroke-width="2"/><path d="m24 11 3.3 6.8 7.5 1.1-5.4 5.3 1.3 7.4-6.7-3.5-6.7 3.5 1.3-7.4-5.4-5.3 7.5-1.1Z" fill="#fff1ac" stroke="#9d5c10" stroke-width="1.3"/></svg><b id="monedas-saldo">0</b><span class="solo-lector"> monedas</span><span class="monedas-cambio" id="monedas-cambio" aria-hidden="true"></span></span><button class="btn-chico" id="btn-cambiar">Cambiar</button></div></div>
@@ -1190,8 +1230,13 @@ body:has(#nav-fija:not([hidden])) { scroll-padding-top: 88px; }
   <!-- álbum de figuritas (v0.23, pedido de Damián) -->
   <section id="vista-album" hidden>
     <div class="titulo"><h1>Álbum de figuritas</h1><p class="sub" id="album-sub"></p></div>
+    <div class="album-pegar" id="album-pegar">
+      <p id="pegar-mensaje" role="status" aria-live="polite"></p>
+      <div class="acciones"><button class="btn-principal" id="btn-pegar" hidden>Pegar mis figuritas</button><button class="btn-secundario" id="btn-pegar-todas" hidden>Pegar todas ya</button></div>
+    </div>
     <div class="album-paginas libro" id="album-paginas"></div>
-    <div class="libro-nav"><button class="btn-chico" id="libro-ant" aria-label="Página anterior">◀</button><span id="libro-pag"></span><button class="btn-chico" id="libro-sig" aria-label="Página siguiente">▶</button></div>
+    <div class="libro-nav"><button class="btn-chico" id="libro-ant" aria-label="Hoja anterior">◀</button><span id="libro-pag"></span><button class="btn-chico" id="libro-sig" aria-label="Hoja siguiente">▶</button></div>
+    <div id="pegar-resumen" class="pegar-resumen" role="status" tabindex="-1" hidden></div>
     <div class="kiosco" id="kiosco">
       <h2><span id="kiosco-sobre"></span>El kiosco</h2>
       <p class="sub">Vende comida, junta monedas y descubre tu próxima figurita.</p>
@@ -4560,7 +4605,7 @@ Motor.ponerLibros(JSON.parse(document.getElementById("libros").textContent));
   })(window.Chess);
   var SVG = JSON.parse($("piezas-svg").textContent);
   var ES_BETA = location.protocol !== "file:" && /\/beta(?:\/|$)/.test(location.pathname);
-  var CLAVE = ES_BETA ? "profedamian_beta_v1" : "profedamian_v1", CLAVE_VIEJA = ES_BETA ? "profedamian_beta_vieja" : "ludchess_clase_v2", VERSION = "0.29";
+  var CLAVE = ES_BETA ? "profedamian_beta_v1" : "profedamian_v1", CLAVE_VIEJA = ES_BETA ? "profedamian_beta_vieja" : "ludchess_clase_v2", VERSION = "0.30";
   var ANIMALES = Motor.ANIMALES, PROFE = Motor.PROFE, TODOS = ANIMALES.concat([PROFE]);
   TODOS.forEach(function (a) { CLAVE_DE[a.emoji] = "animales/" + a.id; });
 
@@ -4646,9 +4691,10 @@ Motor.ponerLibros(JSON.parse(document.getElementById("libros").textContent));
     try { localStorage.setItem(CLAVE, JSON.stringify(memoria)); guardaOk = true; } catch (e) { guardaOk = false; }
   }
   function yo() { return memoria.jugadores[memoria.actual] || null; }
+  var coloresSesion = {}, relojNuevoTorneo = false;
   function prefs() {
     var p = (yo() && yo().prefs) || {};
-    return { piezas: p.piezas || "clasicas", tablero: p.tablero || "azul", coord: p.coord !== false, notacion: p.notacion || "letras", color: p.color || "w",
+    return { piezas: p.piezas || "clasicas", tablero: p.tablero || "azul", coord: p.coord !== false, notacion: p.notacion || "letras", color: coloresSesion[memoria.actual] || "r",
       claro: p.claro || "", oscuro: p.oscuro || "", marco: p.marco || "", marca: p.marca || "", textura: p.textura || "lisa", tam: p.tam || 88,
       pantalla: p.pantalla || "auto", torneoReloj: !!p.torneoReloj, avatar: p.avatar || "🙂", sonido: p.sonido || "madera", volumen: p.volumen || 70, modoPartida: p.modoPartida || "normal" };
   }
@@ -4687,7 +4733,8 @@ Motor.ponerLibros(JSON.parse(document.getElementById("libros").textContent));
     memoria.eventos.push(ev); guardar(); pintarMonedas(delta); return ev;
   }
   function limpio(s) { return String(s || "").replace(/\s+/g, " ").trim().slice(0, 40); }
-  function esc(s) { return String(s).replace(/[&<>"']/g, function (c) { return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]; }); }
+  function nombreVisible(s) { return String(s).replace(/ProfeDamián/g, "Profe Damián"); }
+  function esc(s) { return nombreVisible(s).replace(/[&<>"']/g, function (c) { return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]; }); }
 
   // ---------- vistas ----------
   var VISTAS = ["quien", "inicio", "grupos", "perfil", "animales", "juego", "ajustes", "profe", "creditos", "ayuda", "pintar", "sopa", "desafios", "notas", "album", "torneos"];
@@ -4713,6 +4760,7 @@ Motor.ponerLibros(JSON.parse(document.getElementById("libros").textContent));
   }
   var transicionVista = null, estilosTransicion = null;
   function mostrar(v) {
+    if (v !== "album") cancelarPegado();
     var mover = v !== vistaActual && !window.matchMedia("(prefers-reduced-motion: reduce)").matches;
     if (transicionVista) { transicionVista.remove(); transicionVista = null; }
     // La salida es solo una copia visual inerte. El cambio real sigue siendo síncrono:
@@ -5741,7 +5789,7 @@ Motor.ponerLibros(JSON.parse(document.getElementById("libros").textContent));
       cont.appendChild(caja);
     });
   }
-  $("seg-color").onclick = function (e) { var c = e.target.dataset && e.target.dataset.c; if (!c) return; guardarPref("color", c); pintarAnimales(); };
+  $("seg-color").onclick = function (e) { var c = e.target.dataset && e.target.dataset.c; if (!c) return; coloresSesion[memoria.actual] = c; guardarPref("color", c); pintarAnimales(); };
   $("seg-modo").onclick = function (e) { var m = e.target.dataset && e.target.dataset.m; if (!m) return; guardarPref("modoPartida", m); pintarAnimales(); };
 
   // ---------- modos de partida, reloj y Elo (v0.20, fallos de Damián) ----------
@@ -5995,7 +6043,7 @@ Motor.ponerLibros(JSON.parse(document.getElementById("libros").textContent));
   function torneosJugados() { return memoria.eventos.filter(function (e) { return e.jugador === memoria.actual && e.tipo === "torneo_fin" && e.puesto; }); }
   function fmtPuntos(p) { return String(p).replace(".5", " y medio").replace(/^0 y medio$/, "medio"); }
   function pintarTorneos() {
-    var j = yo(), t = j.torneo, ep = eloPrincipal(), conReloj = !!prefs().torneoReloj;
+    var j = yo(), t = j.torneo, ep = eloPrincipal(), conReloj = relojNuevoTorneo;
     var riv = t ? t.rivales.map(function (r) { return { a: animalDe(r.a), et: r.et, elo: animalDe(r.a).etapas[r.et].elo }; }) : rivalesTorneo(ep.elo);
     Array.prototype.forEach.call($("seg-torneo-reloj").children, function (b) { b.setAttribute("aria-pressed", String((b.dataset.r === "1") === (t ? t.reloj : conReloj))); b.disabled = !!t; });
     var pts = t ? t.res.reduce(function (s, x) { return s + x; }, 0) : 0;
@@ -6018,12 +6066,12 @@ Motor.ponerLibros(JSON.parse(document.getElementById("libros").textContent));
     } else if (!t && riv.length < TORNEO_RONDAS) { m.textContent = "Para un torneo hacen falta 5 rivales despiertos."; m.hidden = false; m.className = "mensaje"; }
     else m.hidden = true;
   }
-  function abrirTorneos() { pintarTorneos(); mostrar("torneos"); }
+  function abrirTorneos() { if (!yo().torneo) relojNuevoTorneo = false; pintarTorneos(); mostrar("torneos"); }
   function jugarRonda() {
     var j = yo(), t = j.torneo;
     if (!t) {
       var riv = rivalesTorneo(eloPrincipal().elo); if (riv.length < TORNEO_RONDAS) return;
-      t = j.torneo = { id: Date.now().toString(36), reloj: !!prefs().torneoReloj, rivales: riv.map(function (r) { return { a: r.a.id, et: r.et }; }), res: [] };
+      t = j.torneo = { id: Date.now().toString(36), reloj: relojNuevoTorneo, rivales: riv.map(function (r) { return { a: r.a.id, et: r.et }; }), res: [] };
       registrar({ modo: "torneo", tipo: "torneo_inicio", torneo: t.id, motivo: t.rivales.map(function (r) { return r.a + ":" + r.et; }).join(","), modo_partida: t.reloj ? "rapida_seria" : "seria" });
     }
     var r = t.rivales[t.res.length], ronda = t.res.length + 1;
@@ -6037,7 +6085,7 @@ Motor.ponerLibros(JSON.parse(document.getElementById("libros").textContent));
     if (t.res.length < TORNEO_RONDAS) return "<br><b>Torneo:</b> ronda " + pt.ronda + " de " + TORNEO_RONDAS + " jugada.";
     var puesto = puestoTorneo(t.res), pts = t.res.reduce(function (s, x) { return s + x; }, 0), pr = premioTorneo(puesto);
     registrar({ modo: "torneo", tipo: "torneo_fin", torneo: t.id, puesto: puesto, puntos: pts, reloj: t.reloj, motivo: t.res.join(","), modo_partida: t.reloj ? "rapida_seria" : "seria" });
-    j.torneo = null; guardar();
+    j.torneo = null; relojNuevoTorneo = false; guardar();
     Sonido.sonar(puesto === 1 ? "nota_buena" : "bien");
     festejar("torneo-" + pr.k.replace("copa_", ""));   // los id de M no llevan guion bajo
     return '<br><span class="premio"><span class="e">' + copa(pr.k, pr.e) + "</span> <b>Terminó el torneo.</b> " + pr.n + "</span><br><span class=\"premio-monedas\">+" + (puesto === 1 ? 30 : puesto === 2 ? 20 : puesto === 3 ? 10 : 5) + " monedas</span>";
@@ -6048,9 +6096,9 @@ Motor.ponerLibros(JSON.parse(document.getElementById("libros").textContent));
     var j = yo(), t = j.torneo; if (!t) return;
     if (!window.confirm("¿Dejar el torneo? Lo que jugaste no da premio.")) return;
     registrar({ modo: "torneo", tipo: "torneo_fin", torneo: t.id, abandonado: true, motivo: t.res.join(","), modo_partida: t.reloj ? "rapida_seria" : "seria" });
-    j.torneo = null; guardar(); pintarTorneos();
+    j.torneo = null; relojNuevoTorneo = false; guardar(); pintarTorneos();
   };
-  $("seg-torneo-reloj").onclick = function (e) { var b = e.target.closest && e.target.closest("button"); if (!b || yo().torneo) return; guardarPref("torneoReloj", b.dataset.r === "1"); pintarTorneos(); };
+  $("seg-torneo-reloj").onclick = function (e) { var b = e.target.closest && e.target.closest("button"); if (!b || yo().torneo) return; relojNuevoTorneo = b.dataset.r === "1"; guardarPref("torneoReloj", relojNuevoTorneo); pintarTorneos(); };
   $("btn-torneos-volver").onclick = function () { pintarInicio(); mostrar("inicio"); };
 
   // ---------- Mis notas y mi nivel (v0.20, pedido de Damián: "una sección de notas y progreso ... el alumno va a querer mejorar
@@ -6253,14 +6301,18 @@ Motor.ponerLibros(JSON.parse(document.getElementById("libros").textContent));
       });
       if (figs.length) pags.push({ id: coleccion.id, n: coleccion.n, que: "Encuéntralas en los sobres. Cada dibujo ya forma parte del juego.", kiosco: true, figs: figs });
     });
-    var paginas = [];
+    var paginas = [], numeroFigurita = 0;
     pags.forEach(function (p) {
       p.figs.forEach(function (f) {
-        f.pag = p.id; f.kiosco = !!p.kiosco;
+        f.pag = p.id; f.kiosco = !!p.kiosco; f.numero = ++numeroFigurita;
         f.rareza = f.rareza || (/^gigante_|^torneo_oro$|^excelentes_10$/.test(f.id) ? "brillante" : /^(grande_|pieza_|adorno_)/.test(f.id) ? "especial" : "comun");
       });
-      for (var i = 0; i < p.figs.length; i += 9) paginas.push({ id: p.id + (i ? "-" + (i / 9 + 1) : ""), n: p.n,
-        que: p.que, kiosco: p.kiosco, figs: p.figs.slice(i, i + 9) });
+      for (var i = 0; i < p.figs.length; i += 9) {
+        var figsHoja = p.figs.slice(i, i + 9), numeroHoja = paginas.length + 1;
+        figsHoja.forEach(function (f) { f.hoja = numeroHoja; });
+        paginas.push({ id: p.id + (i ? "-" + (i / 9 + 1) : ""), n: p.n, numero: numeroHoja,
+          que: p.que, kiosco: p.kiosco, figs: figsHoja });
+      }
     });
     return paginas;
   }
@@ -6273,7 +6325,7 @@ Motor.ponerLibros(JSON.parse(document.getElementById("libros").textContent));
     var sobreHTML = IMAGENES["album/sobre"] ? '<img class="dibujo sobre" alt="" src="' + IMAGENES["album/sobre"] + '">' : "";
     $("kiosco-sobre").innerHTML = sobreHTML; $("sobre-compra").innerHTML = sobreHTML;
     $("album-sub").textContent = "Tienes " + tiene + " de " + todas.length + " figuritas. Toca una para ver cómo se gana.";
-    $("btn-comprar-sobre").disabled = monedas() < SOBRE_COSTO || !!abiertoSobre;
+    $("btn-comprar-sobre").disabled = monedas() < SOBRE_COSTO || !!abiertoSobre || !!pegado;
     $("sobre-precio").textContent = SOBRE_COSTO + " monedas";
     $("kiosco-aviso").textContent = monedas() < SOBRE_COSTO ? "Te faltan " + (SOBRE_COSTO - monedas()) + " monedas para un sobre. Resuelve problemas o vende comida." : "¡Tu próximo sobre te está esperando!";
     var d = despensa();
@@ -6291,13 +6343,12 @@ Motor.ponerLibros(JSON.parse(document.getElementById("libros").textContent));
       return '<div class="pagina-album' + (t === p.figs.length ? " completa" : "") + '" id="pagina-' + p.id + '"><h3>' + p.n + " <small>" + t + " de " + p.figs.length + "</small></h3><p class=\"sub\">" + p.que + '</p><div class="hojas">' +
         p.figs.map(function (f) {
           var nueva = f.tiene && visto.indexOf(f.id) < 0;
-          return '<button class="fig-album ' + (f.tiene ? "tiene" : "falta") + (nueva ? " nueva" : "") + ' rareza-' + f.rareza + '" data-rareza="' + f.rareza + '" data-f="' + f.id + '" aria-label="' + esc(f.n) + ", " + RAREZAS[f.rareza].n + (f.tiene ? "" : ", todavía no") + '">' +
-            '<span class="fig-img">' + (f.html || "?") + "</span><span class=\"fig-n\">" + esc(f.n) + "</span>" + rarezaHTML(f) + ((f.cuantas || 0) > 1 ? '<span class="rep">×' + f.cuantas + "</span>" : "") + "</button>";
-        }).join("") + "</div></div>";
+          return '<button class="fig-album ' + (f.tiene ? "tiene" : "falta") + (nueva ? " nueva pendiente" : "") + ' rareza-' + f.rareza + '" data-rareza="' + f.rareza + '" data-f="' + f.id + '" data-numero="' + f.numero + '" aria-label="' + f.numero + ". " + esc(f.n) + ", " + RAREZAS[f.rareza].n + (f.tiene ? "" : ", todavía no") + '">' +
+            '<span class="fig-numero">' + f.numero + '</span><span class="fig-img">' + (f.html || "?") + "</span><span class=\"fig-n\">" + esc(f.n) + "</span>" + rarezaHTML(f) + ((f.cuantas || 0) > 1 ? '<span class="rep">×' + f.cuantas + "</span>" : "") + "</button>";
+        }).join("") + '</div><span class="hoja-numero" aria-label="Hoja ' + p.numero + '">' + p.numero + "</span></div>";
     }).join("");
     $("album-paginas").scrollLeft = 0; paginaVista = 0; paginaLibro();
-    // se marcan como vistas: la próxima vez ya no brillan
-    j.albumVisto = todas.filter(function (f) { return f.tiene; }).map(function (f) { return f.id; }); guardar();
+    actualizarPegado();
   }
   var paginaVista = 0;
   function paginaLibro() {
@@ -6307,17 +6358,86 @@ Motor.ponerLibros(JSON.parse(document.getElementById("libros").textContent));
       pg.classList.remove("gira-sig", "gira-ant"); void pg.offsetWidth; pg.classList.add(dir);
       paginaVista = i;
     }
-    $("libro-pag").textContent = i === 0 ? "Tapa" : "Página " + i + " de " + (n - 1);
-    $("libro-ant").disabled = i <= 0; $("libro-sig").disabled = i >= n - 1;
-    // El carril horizontal toma el alto de su página, no el de la más larga.
-    if (l.clientWidth && l.children[i]) l.style.height = l.children[i].offsetHeight + "px";
+    $("libro-pag").textContent = i === 0 ? "Tapa" : "Hoja " + i + " de " + (n - 1);
+    $("libro-ant").disabled = !!pegado || i <= 0; $("libro-sig").disabled = !!pegado || i >= n - 1;
   }
   $("album-paginas").addEventListener("scroll", function () { paginaLibro(); }, { passive: true });
   $("libro-ant").onclick = function () { var l = $("album-paginas"); l.scrollBy({ left: -l.clientWidth, behavior: "smooth" }); };
   $("libro-sig").onclick = function () { var l = $("album-paginas"); l.scrollBy({ left: l.clientWidth, behavior: "smooth" }); };
   window.addEventListener("resize", paginaLibro);
   $("album-paginas").addEventListener("load", paginaLibro, true);
-  function abrirAlbum() { abiertoSobre = null; $("sobre-abierto").hidden = true; pintarAlbum(); mostrar("album"); paginaLibro(); }
+  function abrirAlbum() { cancelarPegado(); abiertoSobre = null; $("sobre-abierto").hidden = true; $("pegar-resumen").hidden = true; pintarAlbum(); mostrar("album"); paginaLibro(); }
+  var pegado = null;
+  function actualizarPegado() {
+    var n = figuritasNuevas().length;
+    $("btn-pegar").hidden = !!pegado || !n; $("btn-pegar-todas").hidden = !n && !pegado;
+    $("btn-pegar").disabled = $("btn-pegar-todas").disabled = !!abiertoSobre;
+    $("album-paginas").classList.toggle("en-pegado", !!pegado);
+    if (!pegado) $("pegar-mensaje").textContent = abiertoSobre ? "Descubre las dos figuritas del sobre." : n ? n + (n === 1 ? " figurita para pegar." : " figuritas para pegar.") : "Tus figuritas están pegadas. ¡Sigue completando tu álbum!";
+    paginaLibro();
+  }
+  function cancelarPegado() {
+    if (!pegado) return;
+    pegado = null;
+    Array.prototype.forEach.call(document.querySelectorAll(".fig-album.pegando"), function (b) { b.classList.remove("pegando"); });
+    $("album-paginas").classList.remove("en-pegado");
+  }
+  function irHoja(numero, mover) {
+    var l = $("album-paginas");
+    l.scrollTo({ left: numero * l.clientWidth, behavior: mover ? "smooth" : "instant" });
+    if (!mover) paginaLibro();
+  }
+  function marcarPegada(f) {
+    var j = yo(); j.albumVisto = j.albumVisto || [];
+    if (j.albumVisto.indexOf(f.id) < 0) j.albumVisto.push(f.id);
+    var b = $("album-paginas").querySelector('[data-f="' + f.id + '"]');
+    if (b) b.classList.remove("nueva", "pendiente", "pegando");
+  }
+  function terminarPegado(job) {
+    if (pegado !== job) return;
+    pegado = null; guardar(); actualizarPegado();
+    $("pegar-resumen").innerHTML = "<b>¡Ya están en tu álbum!</b><ul>" + job.resultados.map(function (f) { return "<li>" + esc(f.n) + " → hoja " + f.hoja + " · figurita " + f.numero + "</li>"; }).join("") + "</ul>";
+    $("pegar-resumen").hidden = false;
+    $("pegar-mensaje").textContent = "¡Listo! Tus figuritas quedaron pegadas.";
+    $("btn-comprar-sobre").disabled = monedas() < SOBRE_COSTO || !!abiertoSobre;
+  }
+  function colaPegado() { return figuritasNuevas().sort(function (a, b) { return a.hoja - b.hoja || a.numero - b.numero; }); }
+  function pegarTodasYa() {
+    if (abiertoSobre) return;
+    var job = pegado || { jugador: memoria.actual, resultados: [] }, nuevas = colaPegado();
+    pegado = job;
+    nuevas.forEach(function (f) { marcarPegada(f); job.resultados.push(f); });
+    var ultima = job.resultados[job.resultados.length - 1];
+    if (ultima) irHoja(ultima.hoja, false);
+    terminarPegado(job);
+  }
+  async function pegarFiguritas() {
+    if (pegado || abiertoSobre) return;
+    var cola = colaPegado(); if (!cola.length) return;
+    var job = pegado = { jugador: memoria.actual, resultados: [] };
+    $("pegar-resumen").hidden = true; actualizarPegado(); $("btn-comprar-sobre").disabled = true;
+    var pausa = function (ms) { return new Promise(function (ok) { setTimeout(ok, ms); }); };
+    var activo = function () { return pegado === job && vistaActual === "album" && memoria.actual === job.jugador; };
+    for (var k = 0; k < cola.length; k++) {
+      var f = cola[k], reducir = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+      $("pegar-mensaje").textContent = f.n + " → hoja " + f.hoja + " · figurita " + f.numero;
+      irHoja(f.hoja, !reducir);
+      if (!reducir) await pausa(850);
+      if (!activo()) return;
+      var b = $("album-paginas").querySelector('[data-f="' + f.id + '"]');
+      b.closest(".pagina-album").querySelector(".hoja-numero").scrollIntoView({ block: "end", behavior: "instant" });
+      if (!reducir) {
+        b.style.setProperty("--vuelo-y", Math.max(160, window.innerHeight - b.getBoundingClientRect().top + 50) + "px");
+        b.classList.add("pegando"); await pausa(1000);
+      } else await pausa(0);
+      if (!activo()) return;
+      marcarPegada(f); job.resultados.push(f); guardar();
+      if (!reducir) await pausa(180);
+    }
+    terminarPegado(job);
+  }
+  $("btn-pegar").onclick = pegarFiguritas;
+  $("btn-pegar-todas").onclick = pegarTodasYa;
   function sortear() {
     var del = [];
     todasLasFiguritas().filter(function (f) { return f.kiosco; }).forEach(function (f) { for (var k = 0; k < RAREZAS[f.rareza].peso; k++) del.push(f.id); });
@@ -6326,13 +6446,14 @@ Motor.ponerLibros(JSON.parse(document.getElementById("libros").textContent));
     return out.slice(0, SOBRE_FIGURITAS);
   }
   function venderComida(cid) {
+    if (pegado) return false;
     if (!comidaPor(cid) || (despensa()[cid] || 0) < 1) return false;
     var consumo = {}; consumo[cid] = 1;
     if (!registrar({ modo: "album", tipo: "venta_comida", comida: cid, cantidad: 1, consumo: consumo, monedas: valorComida(cid) })) return false;
     pintarAlbum(); $("kiosco-aviso").textContent = "Vendiste 1 " + comidaPor(cid).n.toLowerCase() + ". +" + valorComida(cid) + " monedas."; return true;
   }
   function comprarSobre() {
-    if (monedas() < SOBRE_COSTO || abiertoSobre) return false;
+    if (monedas() < SOBRE_COSTO || abiertoSobre || pegado) return false;
     var antes = enSobres(), figs = sortear();
     if (!registrar({ modo: "album", tipo: "sobre", monedas: -SOBRE_COSTO, figuritas: figs })) return false;
     Sonido.sonar("comida");
@@ -6349,7 +6470,7 @@ Motor.ponerLibros(JSON.parse(document.getElementById("libros").textContent));
     $("sobre-abierto").querySelector(".carta-sobre").focus(); return true;
   }
   function canjearRepetidas() {
-    if (abiertoSobre) return;
+    if (abiertoSobre || pegado) return;
     var reps = todasLasFiguritas().filter(function (f) { return (f.cuantas || 0) > 1; }), n = 0;
     var ganadas = 0;
     reps.forEach(function (f) { for (var k = 1; k < f.cuantas; k++) { var valor = RAREZAS[f.rareza].monedas; if (registrar({ modo: "album", tipo: "canje_repetida", figurita: f.id, monedas: valor })) { n++; ganadas += valor; } } });
@@ -6365,10 +6486,11 @@ Motor.ponerLibros(JSON.parse(document.getElementById("libros").textContent));
     var b = e.target.closest && e.target.closest(".carta-sobre"); if (!b || b.classList.contains("revelada")) return;
     b.classList.add("revelada"); b.setAttribute("aria-pressed", "true");
     b.setAttribute("aria-label", b.querySelector(".fig-n").textContent + ", " + b.querySelector(".rareza").textContent);
-    if (!$("sobre-abierto").querySelector(".carta-sobre:not(.revelada)")) { abiertoSobre = null; $("btn-comprar-sobre").disabled = monedas() < SOBRE_COSTO; }
+    if (!$("sobre-abierto").querySelector(".carta-sobre:not(.revelada)")) { abiertoSobre = null; $("btn-comprar-sobre").disabled = monedas() < SOBRE_COSTO; actualizarPegado(); }
   };
   $("btn-canjear-repetidas").onclick = canjearRepetidas;
   $("album-paginas").onclick = function (e) {
+    if (pegado) return;
     var b = e.target.closest && e.target.closest(".fig-album[data-f]"); if (!b) return;
     var f = todasLasFiguritas().filter(function (x) { return x.id === b.dataset.f; })[0]; if (!f) return;
     var im = b.querySelector("img"), v = $("ver-img");
@@ -6462,8 +6584,8 @@ Motor.ponerLibros(JSON.parse(document.getElementById("libros").textContent));
   }
   // tocar la infografía la muestra a pantalla completa
   function verInfografia(t) {
-    var v = $("ver-img"); v.src = IMAGENES["infografias/" + t.id]; v.className = "infografia"; v.alt = t.titulo;
-    $("ver-titulo").textContent = t.titulo; $("ver-frase").hidden = true; $("ver-texto").innerHTML = "";
+    var v = $("ver-img"); v.src = IMAGENES["infografias/" + t.id]; v.className = "infografia"; v.alt = nombreVisible(t.titulo);
+    $("ver-titulo").textContent = nombreVisible(t.titulo); $("ver-frase").hidden = true; $("ver-texto").innerHTML = "";
     $("ver-dibujo").hidden = false; $("ver-cerrar").focus();
   }
   // v0.21 (fallo de Damián): "ayuda en el panel general no, porque te aparecen todas las ayudas y es muy confuso". Cada pantalla
@@ -7610,7 +7732,7 @@ Motor.ponerLibros(JSON.parse(document.getElementById("libros").textContent));
         memoria.eventos = memoria.eventos.concat(nuevos); memoria.eventos.sort(function (a, b) { return a.fecha < b.fecha ? -1 : a.fecha > b.fecha ? 1 : 0; });
         guardar(); pintarProfe();
         $("aviso-copia").textContent = "Juntados " + nuevos.length + " registros nuevos del dispositivo " + (otra.dispositivo || "?") + ".";
-      } catch (e) { $("aviso-copia").textContent = "Ese archivo no es una copia de ProfeDamián."; }
+      } catch (e) { $("aviso-copia").textContent = "Ese archivo no es una copia de Profe Damián."; }
     };
     lector.readAsText(f);
   };
@@ -7641,7 +7763,7 @@ Motor.ponerLibros(JSON.parse(document.getElementById("libros").textContent));
   $("btn-creditos-volver").onclick = salir;
 
   // ---------- arranque ----------
-  if (ES_BETA) { var etiquetaBeta = document.createElement("small"); etiquetaBeta.className = "beta-etiqueta"; etiquetaBeta.textContent = "Beta"; $("marca").appendChild(etiquetaBeta); document.title = "ProfeDamián · Beta"; }
+  if (ES_BETA) { var etiquetaBeta = document.createElement("small"); etiquetaBeta.className = "beta-etiqueta"; etiquetaBeta.textContent = "Beta"; $("marca").appendChild(etiquetaBeta); document.title = "Profe Damián · Beta"; }
   leer(); aplicarTema();
   try { if (navigator.storage && navigator.storage.persist) navigator.storage.persist(); } catch (e) {}
   if (yo()) { pintarInicio(); mostrar("inicio"); } else pintarQuien();
@@ -7649,7 +7771,7 @@ Motor.ponerLibros(JSON.parse(document.getElementById("libros").textContent));
     elos: function () { return elos(); },
     reloj: function (cambios) { if (reloj) for (var k in cambios) reloj[k] = cambios[k]; return reloj && { mio: reloj.mio, suyo: reloj.suyo, corre: reloj.corre }; },
     libre: function () { return !bloqueado; },
-    album: function () { var t = todasLasFiguritas(); return { tiene: t.filter(function (f) { return f.tiene; }).map(function (f) { return f.id; }), total: t.length, sobres: enSobres(), nuevas: figuritasNuevas().length, despensa: despensa(), monedas: monedas(), catalogo: t.map(function (f) { return { id: f.id, rareza: f.rareza, como: f.como, imagen: f.imagen, kiosco: f.kiosco }; }) }; },
+    album: function () { var t = todasLasFiguritas(); return { tiene: t.filter(function (f) { return f.tiene; }).map(function (f) { return f.id; }), total: t.length, sobres: enSobres(), nuevas: figuritasNuevas().length, pegando: !!pegado, despensa: despensa(), monedas: monedas(), catalogo: t.map(function (f) { return { id: f.id, numero: f.numero, hoja: f.hoja, rareza: f.rareza, como: f.como, imagen: f.imagen, kiosco: f.kiosco }; }) }; },
     economia: function () { return { monedas: monedas(), premio: premioMonedas, valorComida: valorComida }; },
     proximoSobre: function (x) { proximoSobre = x; },
     torneo: function () { var t = yo().torneo; return { actual: t ? JSON.parse(JSON.stringify(t)) : null, jugados: torneosJugados().map(function (e) { return { puesto: e.puesto, puntos: e.puntos, reloj: e.reloj }; }) }; },
