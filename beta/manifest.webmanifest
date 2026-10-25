@@ -1,0 +1,23 @@
+{
+ "name": "ProfeDamián",
+ "short_name": "ProfeDamián",
+ "start_url": "./",
+ "display": "standalone",
+ "orientation": "any",
+ "background_color": "#152724",
+ "theme_color": "#152724",
+ "lang": "es",
+ "icons": [
+  {
+   "src": "icono-192.png",
+   "sizes": "192x192",
+   "type": "image/png"
+  },
+  {
+   "src": "icono-512.png",
+   "sizes": "512x512",
+   "type": "image/png",
+   "purpose": "any maskable"
+  }
+ ]
+}
