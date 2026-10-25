@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="claude:viewport-fit-sides" content="cover">
-<title>ProfeDamián</title>
+<title>Profe Damián</title>
 <style>
 /* v0.26: lugar de los festejos (motor de animaciones M); no bloquea los toques */
 #festejo { position: fixed; left: 50%; top: 42%; width: min(80vw, 360px); height: min(80vw, 360px); transform: translate(-50%, -50%); pointer-events: none; z-index: 60; }
@@ -947,8 +947,9 @@ body:has(#nav-fija:not([hidden])) { scroll-padding-top: 88px; }
 }
 /* el libro: la página que llega gira desde el lomo */
 .album-paginas.libro { perspective: 1600px; }
-.album-paginas.libro .pagina-album.gira-sig { animation: v27-gira-sig .55s cubic-bezier(.2, .8, .3, 1) both; transform-origin: left center; }
-.album-paginas.libro .pagina-album.gira-ant { animation: v27-gira-ant .55s cubic-bezier(.2, .8, .3, 1) both; transform-origin: right center; }
+/* Se anima el contenido: rotar el área de scroll-snap desplaza el destino en Chromium. */
+.album-paginas.libro .pagina-album.gira-sig > .hojas { animation: v27-gira-sig .55s cubic-bezier(.2, .8, .3, 1) both; transform-origin: left center; }
+.album-paginas.libro .pagina-album.gira-ant > .hojas { animation: v27-gira-ant .55s cubic-bezier(.2, .8, .3, 1) both; transform-origin: right center; }
 @keyframes v27-gira-sig { from { transform: rotateY(-75deg); filter: brightness(.7); } to { transform: none; filter: none; } }
 @keyframes v27-gira-ant { from { transform: rotateY(75deg); filter: brightness(.7); } to { transform: none; filter: none; } }
 /* las figuritas nuevas "se pegan": caen girando, rebotan y brillan */
@@ -960,7 +961,7 @@ body:has(#nav-fija:not([hidden])) { scroll-padding-top: 88px; }
 .album-paginas .fig-album.tiene:hover { transform: rotate(-3deg) scale(1.06); transition: transform .15s; }
 @media (prefers-reduced-motion: reduce) {
   .estado-jugador .estado-album .icono, .estado-jugador .nuevas, .album-paginas .fig-album.nueva,
-  .album-paginas.libro .pagina-album.gira-sig, .album-paginas.libro .pagina-album.gira-ant { animation: none; }
+  .album-paginas.libro .pagina-album.gira-sig > .hojas, .album-paginas.libro .pagina-album.gira-ant > .hojas { animation: none; }
 }
 /* v0.27b: el panel en dos columnas (dibujo | título y estado), y el menú centrado también en el celular */
 .estado-jugador .tarjeta { display: grid; grid-template-columns: auto minmax(0, 1fr); grid-auto-rows: min-content; column-gap: 14px; row-gap: 4px; align-content: center; }
@@ -971,22 +972,211 @@ body:has(#nav-fija:not([hidden])) { scroll-padding-top: 88px; }
 #tarjetas .tarjeta h2 { text-align: center; }
 #tarjetas .tarjeta h2, #tarjetas .tarjeta .icono, #tarjetas .tarjeta .que:last-child { align-self: center; }
 
+/* ===== v0.28 · un juego por dentro también ===== */
+.solo-lector { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
+#caja-quien { position: fixed; z-index: 32; top: max(16px, env(safe-area-inset-top, 0px)); right: max(78px, calc((100vw - 1120px) / 2 + 62px));
+  width: auto; gap: 7px; padding: 4px; border-radius: 26px; background: var(--surface); box-shadow: 0 3px 12px #0002; }
+#caja-quien .perfil-btn { border: 0; box-shadow: none; }
+#quien-nombre { max-width: 130px; text-overflow: ellipsis; overflow: hidden; white-space: nowrap; }
+.monedero { position: relative; display: inline-flex; align-items: center; justify-content: center; gap: 4px; min-width: 76px; min-height: 44px;
+  padding: 3px 9px 3px 4px; border-radius: 22px; background: #fff0b3; color: #633906; box-shadow: inset 0 -3px 0 #e5b645; font: 800 1.15rem var(--display); }
+.moneda { width: 34px; height: 34px; flex: none; }
+.monedas-cambio { position: absolute; right: 10px; top: 24px; opacity: 0; pointer-events: none; color: var(--ink); background: var(--surface); padding: 0 5px; border-radius: 10px; }
+.monedero.suma .moneda { animation: moneda-salta .45s ease; }
+.monedero.suma .monedas-cambio { animation: moneda-sube 1.3s ease both; }
+@keyframes moneda-salta { 45% { transform: translateY(-6px) rotate(15deg); } }
+@keyframes moneda-sube { 15%,60% { opacity: 1; transform: translateY(8px); } to { opacity: 0; transform: translateY(-14px); } }
+.premio-monedas { display: inline-block; padding: 3px 10px; border-radius: 16px; background: #fff0b3; color: #633906; font-weight: 800; }
+.cambio-vista { position: fixed; inset: 0; z-index: 18; overflow: clip; contain: strict;
+  pointer-events: none; background: var(--bg); }
+.beta-etiqueta { padding: 3px 7px; border-radius: 9px; background: var(--gold); color: var(--gold-ink); font-size: .65rem; letter-spacing: .03em; }
+
+/* Las mismas fichas con relieve del menú, con los estados legibles. */
+#tarjetas-grupos { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 18px; }
+:is(#tarjetas-grupos .tarjeta, #desafio-lista .tarjeta, .nota-nivel, .torneo-rondas li.ronda) {
+  --ficha: #365fc2; position: relative; border: 2px solid #ffffff45; border-radius: 24px; padding: 18px;
+  color: #fff; background: linear-gradient(145deg, color-mix(in srgb, var(--ficha) 85%, white), var(--ficha) 55%, color-mix(in srgb, var(--ficha) 78%, black));
+  box-shadow: 0 6px 0 color-mix(in srgb, var(--ficha) 65%, black), 0 10px 20px #0002; transition: transform .12s ease, box-shadow .12s ease;
+}
+:is(#tarjetas-grupos .tarjeta, #desafio-lista .tarjeta, .nota-nivel, .torneo-rondas li.ronda):nth-child(4n+2) { --ficha: #8046b1; }
+:is(#tarjetas-grupos .tarjeta, #desafio-lista .tarjeta, .nota-nivel, .torneo-rondas li.ronda):nth-child(4n+3) { --ficha: #187568; }
+:is(#tarjetas-grupos .tarjeta, #desafio-lista .tarjeta, .nota-nivel, .torneo-rondas li.ronda):nth-child(4n+4) { --ficha: #ad493a; }
+:is(#tarjetas-grupos .tarjeta, #desafio-lista .tarjeta) { display: flex; flex-direction: column; align-items: center; text-align: center; gap: 10px; }
+:is(#tarjetas-grupos .tarjeta, #desafio-lista .tarjeta):active:not(:disabled) { transform: translateY(4px); box-shadow: 0 2px 0 color-mix(in srgb, var(--ficha) 65%, black); }
+:is(#tarjetas-grupos .tarjeta, #desafio-lista .tarjeta) h2 { color: #fff; text-align: center; margin: 0; font-size: 1.1rem; }
+:is(#tarjetas-grupos .tarjeta, #desafio-lista .tarjeta) :is(.que, .candado) { color: #fff; grid-column: auto; margin: 0; border: 0; padding: 4px 8px; background: #0002; border-radius: 12px; }
+#tarjetas-grupos .tarjeta .icono, :is(#tarjetas-grupos, #desafio-lista) .nivel-num { display: grid; place-items: center; margin: 0; width: 74px; height: 74px; border-radius: 50%; background: #fffffff2; color: #24445f; box-shadow: inset 0 -4px 0 #0002; }
+#tarjetas-grupos .tarjeta .icono { display: flex; align-items: center; justify-content: center; gap: 2px; }
+#tarjetas-grupos .tarjeta .icono:has(img + img) img { width: 30px; height: 48px; }
+#tarjetas-grupos .tarjeta[data-estado="aprobado"] h2::after { color: #fff2aa; }
+#tarjetas-grupos .tarjeta[data-estado="aprobado"] { border-color: #ffe17c; }
+#tarjetas-grupos .tarjeta[data-estado="cerrado"] { --ficha: #5a6879; opacity: .85; }
+.notas-niveles { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 16px; }
+.nota-nivel { display: grid; grid-template-columns: auto 1fr; align-items: center; min-height: 138px; gap: 10px; }
+.nota-nivel .nombre { font-weight: 800; }
+.nota-nivel :is(.btn-mejorar, .cerrado, .max) { grid-column: 1 / -1; justify-self: stretch; text-align: center; color: #fff; }
+.nota-nivel .btn-mejorar { min-height: 44px; background: #fff; color: #273957; border: 0; box-shadow: 0 3px 0 #0003; }
+.nota-nivel .nota-chip { color: #413108; background: #ffe17c; border-color: #ffffff90; }
+.nota-nivel .nota-chip.sin { color: #fff; background: #0003; }
+.torneo-rondas { grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 14px; }
+.torneo-rondas li.ronda { display: flex; flex-direction: column; padding: 16px 10px; text-align: center; gap: 12px; }
+.torneo-rondas .cara-ronda { width: 80px; height: 80px; background: #fff; border-radius: 50%; }
+.torneo-rondas .cara-ronda img.dibujo { width: 68px; height: 68px; }
+.torneo-rondas .res-ronda { color: #fff !important; background: #0003; min-height: 28px; }
+.torneo-rondas .ronda.proxima { border: 3px solid #ffe17c; }
+.torneo-rondas .ronda.gano { border: 3px solid #a8ffbf; }
+#vista-sopa > .fila { padding: 14px; background: var(--surface); border: 2px solid var(--line); border-radius: 22px; box-shadow: var(--lift); }
+#vista-sopa .segmentos { display: flex; flex-wrap: wrap; gap: 10px; background: none; padding: 0; border: 0; }
+#vista-sopa .segmentos button { padding: 10px 14px; min-height: 48px; border: 2px solid var(--line); border-radius: 16px; background: var(--soft); box-shadow: 0 4px 0 var(--line); }
+#vista-sopa .segmentos button[aria-pressed="true"] { background: #365fc2; border-color: #98b7ff; color: white; box-shadow: 0 4px 0 #1e3877; }
+#vista-sopa .sopa-grilla { padding: 8px; background: var(--surface); border: 3px solid var(--line); border-radius: 20px; box-shadow: 0 6px 0 var(--line); }
+
+/* Un puestito, con mercadería y precios grandes. */
+#kiosco { scroll-margin-top: 90px; position: relative; gap: 16px; border: 3px solid #bb7940; border-top: 14px solid #da7051; border-radius: 26px;
+  padding: 24px; background: linear-gradient(180deg, color-mix(in srgb, var(--surface) 88%, #f7c47e), var(--surface)); box-shadow: 0 8px 0 #8e5629, 0 16px 25px #0002; }
+#kiosco::before { content: ''; position: absolute; inset: -14px -3px auto; height: 18px; background: repeating-linear-gradient(90deg,#df6a4b 0 32px,#ffe1aa 32px 64px); border-radius: 20px 20px 6px 6px; }
+#kiosco h2 { font-size: 1.8rem; } #kiosco h3, #kiosco p { margin: 0; }
+.comprar-sobre { display: flex; align-items: center; justify-content: center; gap: 22px; padding: 18px; border: 3px solid #e4ac35; border-radius: 24px;
+  color: #563605; background: #fff2c8; box-shadow: 0 6px 0 #c18c25; text-align: left; }
+.comprar-sobre > span:last-child { display: grid; gap: 6px; } .comprar-sobre b { font-size: 1.2rem; }
+.comprar-sobre img.dibujo { width: 120px; height: 120px; object-fit: contain; filter: drop-shadow(0 4px 3px #0003); }
+.comprar-sobre:disabled { opacity: .75; filter: none; cursor: not-allowed; }
+#sobre-precio { justify-self: start; background: #fff; border: 2px solid #d6a750; padding: 4px 10px; border-radius: 14px; font-weight: 800; }
+.kiosco-comidas { display: grid; grid-auto-flow: column; grid-template-columns: none; grid-auto-columns: 155px; grid-template-rows: repeat(2, auto); gap: 16px;
+  min-width: 0; max-width: 100%; overflow-x: auto; padding-bottom: 10px; scroll-snap-type: x proximity; }
+.btn-venta { scroll-snap-align: start; min-width: 0; min-height: 170px; padding: 12px; display: grid; justify-items: center; gap: 5px; text-align: center; border: 2px solid var(--line); border-radius: 20px; background: var(--surface); color: var(--ink); box-shadow: 0 5px 0 var(--line); }
+.btn-venta .e img.dibujo { width: 60px; height: 60px; } .btn-venta > span:not(.e) { color: var(--ink); font-weight: 700; font-size: .85rem; }
+.btn-venta small { color: var(--muted); } .btn-venta:disabled { opacity: .55; box-shadow: none; }
+.btn-venta:active:not(:disabled) { transform: translateY(3px); box-shadow: 0 2px 0 var(--line); }
+.album-paginas.libro .hojas { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+.album-paginas.libro .fig-album { min-width: 0; overflow: hidden; }
+.fig-album .rareza { display: block; font-size: .65rem; font-weight: 800; border-radius: 10px; padding: 1px 5px; background: #e6e8e7; color: #3e5150; }
+.album-paginas.libro .fig-album.rareza-especial, .fig-album.rareza-especial { border: 3px solid #8567bd; box-shadow: 0 3px 0 #60458f; }
+.album-paginas.libro .fig-album.rareza-brillante, .fig-album.rareza-brillante { border: 4px double #c18a20; box-shadow: 0 3px 0 #a27520; }
+.rareza-especial .rareza { background: #ede4ff; color: #513779; } .rareza-brillante .rareza { background: #fff0b3; color: #6c4703; }
+.fig-album.tiene.rareza-brillante::after { content: ''; position: absolute; inset: 0; pointer-events: none; background: linear-gradient(110deg,transparent 25%,#fff9 45%,transparent 65%); transform: translateX(-130%); animation: figurita-destello 4s ease-in-out infinite; }
+@keyframes figurita-destello { 60%,100% { transform: translateX(130%); } }
+.sobre-abierto { scroll-margin-top: 90px; position: relative; padding: 22px; border-radius: 22px; background: var(--soft); }
+.sobre-abierto > .hojas { grid-template-columns: repeat(2, minmax(0, 180px)); justify-content: center; gap: 18px; }
+.sobre-roto { height: 64px; text-align: center; overflow: hidden; opacity: .6; }
+.sobre-roto img { height: 95px; width: auto; clip-path: polygon(0 0,100% 0,100% 64%,85% 58%,70% 69%,55% 58%,40% 70%,25% 59%,0 68%); animation: sobre-rasga .65s ease both; }
+@keyframes sobre-rasga { from { transform: rotate(-8deg) translateY(18px); opacity: 0; } }
+.carta-sobre { display: block; min-height: 210px; border: 0; padding: 0; background: transparent; box-shadow: none; perspective: 800px; }
+.carta-giro { position: relative; display: block; height: 210px; transform-style: preserve-3d; transition: transform .55s cubic-bezier(.2,.7,.25,1); }
+.carta-sobre.revelada .carta-giro { transform: rotateY(180deg); }
+.carta-sobre :is(.carta-dorso,.carta-frente) { position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 6px; border-radius: 18px; backface-visibility: hidden; }
+.carta-dorso { background: repeating-linear-gradient(45deg,#365fc2 0 10px,#2d51ac 10px 20px); color: #fff; border: 4px double #a7c1ff; box-shadow: 0 6px 0 #193976; }
+.carta-dorso > span { font-size: 4rem; font-weight: 900; }
+.carta-frente { transform: rotateY(180deg); background: #fffdf6; color: #3b2f22; }
+.carta-frente .fig-img, .carta-frente img.dibujo { width: 92px; height: 92px; object-fit: contain; }
+.carta-sobre:focus-visible { outline: 4px solid var(--focus); outline-offset: 6px; }
+@media (max-width: 700px) {
+  #tarjetas-grupos, .notas-niveles { grid-template-columns: repeat(2,minmax(0,1fr)); gap: 14px; }
+  #tarjetas-grupos .tarjeta { padding: 14px 9px; }
+  .torneo-rondas { grid-template-columns: repeat(2,minmax(0,1fr)); }
+  .torneo-rondas li.ronda:last-child { grid-column: 1 / -1; }
+  #caja-quien { top: max(12px, env(safe-area-inset-top, 0px)); right: 68px; gap: 2px; padding: 2px; }
+  #caja-quien #quien-nombre { max-width: 66px; font-size: .85rem; }
+  #caja-quien .perfil-btn { padding: 2px 5px; gap: 3px; }
+  #caja-quien .avatar-mini, #caja-quien .avatar-mini img.dibujo { width: 26px; height: 26px; }
+  #caja-quien .monedero { min-width: 64px; font-size: 1rem; padding: 2px 6px 2px 2px; }
+  .moneda { width: 28px; height: 28px; }
+  body:has(#nav-fija:not([hidden])) #btn-cambiar { display: none; }
+  #btn-cambiar { font-size: .75rem; padding: 4px 6px; }
+  header { min-height: 100px; align-items: end; }
+  body:has(#nav-fija:not([hidden])) header { min-height: 130px; }
+  .app:has(#vista-pintar:not([hidden])) > header { min-height: 100px; align-items: end; }
+  #kiosco { padding: 20px 12px; }
+  .kiosco-comidas { grid-template-columns: none; grid-auto-columns: 138px; gap: 12px; }
+  .comprar-sobre { padding: 12px; gap: 12px; } .comprar-sobre img.dibujo { width: 80px; height: 90px; }
+  .album-paginas.libro .pagina-album { padding: 18px 10px 18px 24px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .monedero.suma .moneda, .monedero.suma .monedas-cambio,
+  .fig-album.tiene.rareza-brillante::after, .sobre-roto img { animation: none !important; }
+  .monedero.suma .monedas-cambio { display: none; }
+  .carta-giro, :is(#tarjetas-grupos .tarjeta,#desafio-lista .tarjeta,.nota-nivel,.torneo-rondas li.ronda) { transition: none; }
+}
+
+/* v0.29: identidad, lectura y continuidad, también en pantallas bajas. */
+.marca .logo-retrato { position: relative; display: inline-block; flex: none; width: 43px; height: 43px;
+  overflow: hidden; border-radius: 50%; border: 2px solid var(--gold-ink); background: var(--gold); }
+/* Encuadre del rostro: x=25..75%, y=5..55%, igual que en publicar.py. */
+.marca .logo-retrato img { position: absolute; width: 200%; height: 200%; max-width: none;
+  left: -50%; top: -10%; padding: 0; border: 0; border-radius: 0; background: transparent; }
+#monedas-saldo { color: #633906; font-weight: 900; font-variant-numeric: tabular-nums; }
+.album-paginas.libro { overflow-y: hidden; }
+.album-paginas.libro .pagina-album:not(.portada) { min-height: 0; }
+/* Solo los tableros interactivos capturan el gesto de arrastre. */
+#tablero-muestra, #tablero-muestra *, .tut-tablero, .tut-tablero *,
+.juego-piezas .muestra, .juego-piezas .muestra *, .tutorial img.infografia { touch-action: auto; }
+#vista-juego { grid-template-columns: minmax(0, 1fr); gap: 18px; }
+.zona-jugada { width: min(100%, 640px, max(280px, calc(100svh - 250px))); min-width: 0;
+  justify-self: center; display: grid; gap: 12px; }
+.zona-jugada > .tablero-caja { width: 100%; }
+#acciones-juego { gap: 10px; scroll-margin-block: 84px 16px; }
+#acciones-juego button { min-height: 48px; padding: 10px 14px; font-size: 1rem; }
+#vista-juego > .panel { width: min(100%, 760px); justify-self: center; }
+.accion-lista { animation: accion-aparece .45s ease-out; }
+@keyframes accion-aparece { 40% { transform: translateY(-5px); } 70% { transform: translateY(2px); } }
+@media (prefers-reduced-motion: reduce) { .accion-lista { animation: none; } }
+
+/* v0.30: hojas de álbum iguales; el papel vacío también pertenece al libro. */
+.album-paginas.libro { --alto-hoja: 704px; height: var(--alto-hoja); max-width: 800px; margin-inline: auto; }
+.album-paginas.libro .pagina-album, .album-paginas.libro .pagina-album:not(.portada) {
+  height: var(--alto-hoja); min-height: var(--alto-hoja); max-height: var(--alto-hoja);
+  display: flex; flex-direction: column; }
+.album-paginas.libro .pagina-album > h3 { margin: 0; }
+.album-paginas.libro .pagina-album > .sub { margin: 8px 0 16px; }
+.album-paginas.libro .hojas { gap: 12px; }
+.hoja-numero { display: block; margin-top: auto; padding-top: 16px; text-align: center;
+  font: 800 1rem var(--display); color: #5b4933; }
+.fig-numero { position: absolute; top: 3px; left: 5px; font: 800 .65rem var(--body); color: #5b4933;
+  background: #fff5dc; border-radius: 7px; padding: 1px 4px; z-index: 1; }
+.album-pegar { position: sticky; top: 78px; z-index: 15; display: flex; flex-wrap: wrap; align-items: center;
+  justify-content: space-between; gap: 8px; padding: 10px 14px; margin: 10px 0 16px;
+  border: 2px solid var(--line); border-radius: 18px; color: var(--ink); background: var(--surface); box-shadow: var(--lift); }
+.album-pegar p { margin: 0; font-weight: 700; } .album-pegar .acciones { gap: 8px; }
+.album-pegar button { min-height: 44px; padding: 8px 12px; }
+.pegar-resumen { margin-block: 16px; padding: 14px 18px; border: 2px solid var(--gold); border-radius: 18px;
+  background: var(--soft); font-size: .9rem; }
+.pegar-resumen ul { margin: 8px 0 0; padding-left: 20px; }
+.album-paginas .fig-album.nueva { animation: none; }
+.album-paginas .fig-album.pendiente .fig-img { opacity: .18; filter: grayscale(1); }
+.album-paginas .fig-album.pendiente::after { display: none; }
+.album-paginas.libro.en-pegado { touch-action: pan-y; }
+.album-paginas.libro.en-pegado .pagina-album > .hojas { animation: none; }
+.album-paginas.libro .fig-album.pegando { z-index: 5; animation: figurita-vuela .95s cubic-bezier(.2,.65,.3,1) both; }
+.album-paginas .fig-album.pegando .fig-img { opacity: 1; filter: none; }
+.album-paginas .fig-album.pegando::after { content: ''; display: block; position: absolute; inset: 0;
+  pointer-events: none; background: linear-gradient(115deg,transparent 25%,#fff 48%,transparent 70%);
+  animation: pegado-brilla .45s ease .5s both; }
+@keyframes figurita-vuela { from { opacity: 0; transform: translateY(var(--vuelo-y, 300px)) rotate(-24deg) scale(.6); }
+  60% { opacity: 1; transform: translateY(-14px) rotate(7deg) scale(1.04); }
+  80% { transform: translateY(5px) rotate(-3deg) scale(.98); } to { opacity: 1; transform: none; } }
+@keyframes pegado-brilla { from { opacity: 0; transform: translateX(-100%); } 50% { opacity: .8; } to { opacity: 0; transform: translateX(100%); } }
+@media (max-width: 540px) { .album-pegar { font-size: .85rem; padding: 8px; } .album-pegar .acciones { width: 100%; }
+  .album-paginas.libro .hojas { gap: 12px 8px; } }
+@media (prefers-reduced-motion: reduce) {
+  .album-paginas.libro .fig-album.pegando, .album-paginas .fig-album.pegando::after { animation: none; }
+}
+
 </style>
 <link rel="manifest" href="manifest.webmanifest">
 <meta name="theme-color" content="#152724">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-title" content="ProfeDamián">
+<meta name="apple-mobile-web-app-title" content="Profe Damián">
 <link rel="apple-touch-icon" href="icono-180.png">
 <link rel="icon" href="icono-192.png">
 </head>
 <body>
 <div class="app">
   <header>
-    <button class="marca" id="marca" aria-label="Ir al menú principal" title="Ir al menú principal"><img id="logo" alt="">ProfeDamián</button>
+    <button class="marca" id="marca" aria-label="Ir al menú principal" title="Ir al menú principal"><span class="logo-retrato"><img id="logo" alt=""></span>Profe Damián</button>
     <nav class="nav-fija" id="nav-fija" aria-label="Navegación" hidden><button class="btn-nav" id="btn-nav-volver" aria-label="Volver" title="Volver"><span aria-hidden="true">←</span><small>Volver</small></button><button class="btn-nav" id="btn-nav-menu" aria-label="Menú principal" title="Menú principal"><span aria-hidden="true">⌂</span><small>Menú</small></button></nav>
     <div class="cabecera-der"><button class="btn-ayuda" id="btn-ayuda" aria-label="Ayuda" title="Ayuda">?</button>
-    <div class="quien" id="caja-quien" hidden><button class="perfil-btn" id="btn-perfil" aria-label="Mi perfil"><span class="avatar-mini" id="avatar-mini"></span><b id="quien-nombre"></b></button><button class="btn-chico" id="btn-cambiar">Cambiar</button></div></div>
+    <div class="quien" id="caja-quien" hidden><button class="perfil-btn" id="btn-perfil" aria-label="Mi perfil"><span class="avatar-mini" id="avatar-mini"></span><b id="quien-nombre"></b></button><span class="monedero" id="monedero" role="status" aria-live="polite" aria-atomic="true"><svg class="moneda" viewBox="0 0 48 48" aria-hidden="true"><circle cx="24" cy="25" r="21" fill="#b36b16"/><circle cx="24" cy="22" r="20" fill="#ffce53" stroke="#75420c" stroke-width="2"/><circle cx="24" cy="22" r="14" fill="#f2ab25" stroke="#ffe69b" stroke-width="2"/><path d="m24 11 3.3 6.8 7.5 1.1-5.4 5.3 1.3 7.4-6.7-3.5-6.7 3.5 1.3-7.4-5.4-5.3 7.5-1.1Z" fill="#fff1ac" stroke="#9d5c10" stroke-width="1.3"/></svg><b id="monedas-saldo">0</b><span class="solo-lector"> monedas</span><span class="monedas-cambio" id="monedas-cambio" aria-hidden="true"></span></span><button class="btn-chico" id="btn-cambiar">Cambiar</button></div></div>
   </header>
 
   <!-- quién juega -->
@@ -1040,11 +1230,19 @@ body:has(#nav-fija:not([hidden])) { scroll-padding-top: 88px; }
   <!-- álbum de figuritas (v0.23, pedido de Damián) -->
   <section id="vista-album" hidden>
     <div class="titulo"><h1>Álbum de figuritas</h1><p class="sub" id="album-sub"></p></div>
+    <div class="album-pegar" id="album-pegar">
+      <p id="pegar-mensaje" role="status" aria-live="polite"></p>
+      <div class="acciones"><button class="btn-principal" id="btn-pegar" hidden>Pegar mis figuritas</button><button class="btn-secundario" id="btn-pegar-todas" hidden>Pegar todas ya</button></div>
+    </div>
     <div class="album-paginas libro" id="album-paginas"></div>
-    <div class="libro-nav"><button class="btn-chico" id="libro-ant" aria-label="Página anterior">◀</button><span id="libro-pag"></span><button class="btn-chico" id="libro-sig" aria-label="Página siguiente">▶</button></div>
+    <div class="libro-nav"><button class="btn-chico" id="libro-ant" aria-label="Hoja anterior">◀</button><span id="libro-pag"></span><button class="btn-chico" id="libro-sig" aria-label="Hoja siguiente">▶</button></div>
+    <div id="pegar-resumen" class="pegar-resumen" role="status" tabindex="-1" hidden></div>
     <div class="kiosco" id="kiosco">
       <h2><span id="kiosco-sobre"></span>El kiosco</h2>
-      <p class="sub">Cambia 2 comidas iguales por un sobre con 2 figuritas de comidas y adornos. Las repetidas las cambias por caramelos.</p>
+      <p class="sub">Vende comida, junta monedas y descubre tu próxima figurita.</p>
+      <button class="comprar-sobre" id="btn-comprar-sobre"><span class="sobre-dibujo" id="sobre-compra"></span><span><b>Un sobre · 2 figuritas</b><span id="sobre-precio">10 monedas</span><small>Comidas, adornos, ilustraciones y más</small></span></button>
+      <p class="kiosco-aviso" id="kiosco-aviso" role="status" aria-live="polite"></p>
+      <h3>Vender comida</h3><p class="sub">Vendes una por toque. También puedes guardarla para tus animales. Desliza para ver más comidas.</p>
       <div class="kiosco-comidas" id="kiosco-comidas"></div>
       <div class="sobre-abierto" id="sobre-abierto" role="status" hidden></div>
       <button class="btn-secundario" id="btn-canjear-repetidas" hidden></button>
@@ -1128,8 +1326,20 @@ body:has(#nav-fija:not([hidden])) { scroll-padding-top: 88px; }
 
   <!-- juego -->
   <section class="juego" id="vista-juego" hidden>
+    <div class="zona-jugada">
     <div class="tablero-caja" id="tablero-caja">
       <div class="marco-tablero"><div class="tablero" id="tablero" role="grid" aria-label="Tablero"></div><div class="coord-filas" aria-hidden="true"></div><div class="coord-cols" aria-hidden="true"></div></div>
+    </div>
+    <div class="acciones" id="acciones-juego" role="group" aria-label="Continuar la partida o el problema">
+      <button class="btn-principal" id="btn-saltar" hidden>Ir al problema</button>
+      <button class="btn-principal" id="btn-siguiente" hidden>Siguiente</button>
+      <button class="btn-principal" id="btn-otra" hidden>Otra partida</button>
+      <button class="btn-principal" id="btn-torneo-seguir" hidden>Seguir el torneo</button>
+      <button class="btn-secundario" id="btn-reintentar" hidden>Otra vez</button>
+      <button class="btn-secundario" id="btn-deshacer" hidden>Deshacer</button>
+      <button class="btn-secundario" id="btn-rendirse" hidden>Me rindo</button>
+      <button class="btn-secundario" id="btn-volver">Volver</button>
+    </div>
     </div>
     <div class="panel">
       <div class="rival" id="rival" hidden><span class="cara" id="rival-cara"></span><div><h3 id="rival-nombre"></h3><span class="progreso" id="rival-elo"></span></div></div>
@@ -1144,16 +1354,6 @@ body:has(#nav-fija:not([hidden])) { scroll-padding-top: 88px; }
       </div>
       <div class="jugadas" id="jugadas" hidden></div>
       <p class="progreso" id="progreso"></p>
-      <div class="acciones">
-        <button class="btn-principal" id="btn-saltar" hidden>Ir al problema</button>
-        <button class="btn-principal" id="btn-siguiente" hidden>Siguiente</button>
-        <button class="btn-principal" id="btn-otra" hidden>Otra partida</button>
-        <button class="btn-principal" id="btn-torneo-seguir" hidden>Seguir el torneo</button>
-        <button class="btn-secundario" id="btn-reintentar" hidden>Otra vez</button>
-        <button class="btn-secundario" id="btn-deshacer" hidden>Deshacer</button>
-        <button class="btn-secundario" id="btn-rendirse" hidden>Me rindo</button>
-        <button class="btn-secundario" id="btn-volver">Volver</button>
-      </div>
     </div>
   </section>
 
@@ -4404,7 +4604,8 @@ Motor.ponerLibros(JSON.parse(document.getElementById("libros").textContent));
     };
   })(window.Chess);
   var SVG = JSON.parse($("piezas-svg").textContent);
-  var CLAVE = "profedamian_v1", CLAVE_VIEJA = "ludchess_clase_v2", VERSION = "0.25";
+  var ES_BETA = location.protocol !== "file:" && /\/beta(?:\/|$)/.test(location.pathname);
+  var CLAVE = ES_BETA ? "profedamian_beta_v1" : "profedamian_v1", CLAVE_VIEJA = ES_BETA ? "profedamian_beta_vieja" : "ludchess_clase_v2", VERSION = "0.30";
   var ANIMALES = Motor.ANIMALES, PROFE = Motor.PROFE, TODOS = ANIMALES.concat([PROFE]);
   TODOS.forEach(function (a) { CLAVE_DE[a.emoji] = "animales/" + a.id; });
 
@@ -4490,23 +4691,50 @@ Motor.ponerLibros(JSON.parse(document.getElementById("libros").textContent));
     try { localStorage.setItem(CLAVE, JSON.stringify(memoria)); guardaOk = true; } catch (e) { guardaOk = false; }
   }
   function yo() { return memoria.jugadores[memoria.actual] || null; }
+  var coloresSesion = {}, relojNuevoTorneo = false;
   function prefs() {
     var p = (yo() && yo().prefs) || {};
-    return { piezas: p.piezas || "clasicas", tablero: p.tablero || "azul", coord: p.coord !== false, notacion: p.notacion || "letras", color: p.color || "w",
+    return { piezas: p.piezas || "clasicas", tablero: p.tablero || "azul", coord: p.coord !== false, notacion: p.notacion || "letras", color: coloresSesion[memoria.actual] || "r",
       claro: p.claro || "", oscuro: p.oscuro || "", marco: p.marco || "", marca: p.marca || "", textura: p.textura || "lisa", tam: p.tam || 88,
       pantalla: p.pantalla || "auto", torneoReloj: !!p.torneoReloj, avatar: p.avatar || "🙂", sonido: p.sonido || "madera", volumen: p.volumen || 70, modoPartida: p.modoPartida || "normal" };
   }
   var sesion = Date.now().toString(36);
   var CONTENIDO = (function (t) { var h = 5381; for (var i = 0; i < t.length; i++) h = ((h * 33) ^ t.charCodeAt(i)) >>> 0; return h.toString(36); })($("ejercicios").textContent);
+  // v0.28: solo los eventos nuevos traen monedas; los anteriores no se revalorizan.
+  function monedas() {
+    var saldo = memoria.eventos.reduce(function (s, e) {
+      return e.jugador === memoria.actual && Number.isSafeInteger(e.monedas) ? s + e.monedas : s;
+    }, 0);
+    return Math.max(0, saldo);
+  }
+  function premioMonedas(ev) {
+    if (ev.tipo === "fin" && ev.fin === "resuelto") return 1;
+    if (ev.tipo === "nota" && ev.nota >= 6) return ev.nota === 10 ? 10 : 5;
+    if (ev.tipo === "partida_fin" && ev.resultado === "gano") return Math.max(2, Math.min(6, 2 + Math.floor(((ev.elo || 200) - 200) / 300)));
+    if (ev.tipo === "torneo_fin" && !ev.abandonado && ev.puesto) return ev.puesto === 1 ? 30 : ev.puesto === 2 ? 20 : ev.puesto === 3 ? 10 : 5;
+    return 0;
+  }
+  function pintarMonedas(cambio) {
+    var total = String(monedas()); if ($("monedas-saldo").textContent !== total) $("monedas-saldo").textContent = total;
+    $("monedero").classList.remove("suma");
+    if (cambio > 0) {
+      $("monedas-cambio").textContent = "+" + cambio;
+      void $("monedero").offsetWidth; $("monedero").classList.add("suma");
+    }
+  }
   function registrar(ev) {
+    var delta = ev.monedas === undefined ? premioMonedas(ev) : ev.monedas, saldo = monedas();
+    if (!Number.isSafeInteger(delta) || !Number.isSafeInteger(saldo + delta) || saldo + delta < 0) return null;
+    if (delta) { ev.monedas = delta; ev.monedas_antes = saldo; ev.monedas_despues = saldo + delta; ev.motivo_monedas = ev.motivo_monedas || ev.tipo; }
     memoria.seq++;
     ev.id = memoria.dispositivo + "-" + memoria.seq; ev.jugador = memoria.actual; ev.sesion = sesion; ev.fecha = new Date().toISOString();
     ev.v = VERSION; ev.contenido = CONTENIDO;
     if (ev.ejercicio && ej && ev.ejercicio === ej.id && ej.grado) ev.grado = ej.grado;
-    memoria.eventos.push(ev); guardar();
+    memoria.eventos.push(ev); guardar(); pintarMonedas(delta); return ev;
   }
   function limpio(s) { return String(s || "").replace(/\s+/g, " ").trim().slice(0, 40); }
-  function esc(s) { return String(s).replace(/[&<>"']/g, function (c) { return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]; }); }
+  function nombreVisible(s) { return String(s).replace(/ProfeDamián/g, "Profe Damián"); }
+  function esc(s) { return nombreVisible(s).replace(/[&<>"']/g, function (c) { return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]; }); }
 
   // ---------- vistas ----------
   var VISTAS = ["quien", "inicio", "grupos", "perfil", "animales", "juego", "ajustes", "profe", "creditos", "ayuda", "pintar", "sopa", "desafios", "notas", "album", "torneos"];
@@ -4530,12 +4758,34 @@ Motor.ponerLibros(JSON.parse(document.getElementById("libros").textContent));
     gen++; pararReloj(); $("ver-dibujo").hidden = true;
     pintarInicio(); mostrar("inicio");
   }
+  var transicionVista = null, estilosTransicion = null;
   function mostrar(v) {
+    if (v !== "album") cancelarPegado();
+    var mover = v !== vistaActual && !window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    if (transicionVista) { transicionVista.remove(); transicionVista = null; }
+    // La salida es solo una copia visual inerte. El cambio real sigue siendo síncrono:
+    // las jugadas, los relojes y las aperturas no esperan una captura del navegador.
+    var anterior = $("vista-" + vistaActual);
+    if (mover && anterior && !anterior.hidden && anterior.animate) {
+      var r = anterior.getBoundingClientRect(), capa = document.createElement("div"), sombra = capa.attachShadow({ mode: "closed" });
+      capa.className = "cambio-vista"; capa.setAttribute("aria-hidden", "true"); capa.inert = true;
+      if (!estilosTransicion) estilosTransicion = Array.prototype.map.call(document.querySelectorAll("style"), function (s) { return s.textContent; }).join("\n");
+      var estilo = document.createElement("style"); estilo.textContent = estilosTransicion; sombra.appendChild(estilo);
+      var copia = anterior.cloneNode(true);
+      copia.style.cssText = "position:absolute;margin:0;left:" + r.left + "px;top:" + r.top + "px;width:" + r.width + "px";
+      sombra.appendChild(copia);
+      var lienzos = anterior.querySelectorAll("canvas"), copias = copia.querySelectorAll("canvas");
+      for (var ci = 0; ci < lienzos.length; ci++) copias[ci].getContext("2d").drawImage(lienzos[ci], 0, 0);
+      document.body.appendChild(capa); transicionVista = capa;
+      var salidaVista = capa.animate([{ opacity: 1, transform: "translateX(0)" }, { opacity: 0, transform: "translateX(-12px)" }], { duration: 140, easing: "ease-out" });
+      salidaVista.onfinish = function () { capa.remove(); if (transicionVista === capa) transicionVista = null; };
+    }
     VISTAS.forEach(function (x) { $("vista-" + x).hidden = x !== v; });
-    $("caja-quien").hidden = !yo() || v === "quien" || v === "profe" || v === "creditos";
+    $("caja-quien").hidden = !yo() || v === "quien";
     vistaActual = v; actualizarNav();
-    if (yo()) { $("quien-nombre").textContent = nombreDe(yo()); ponerCara($("avatar-mini"), prefs().avatar); }
+    if (yo()) { $("quien-nombre").textContent = nombreDe(yo()); ponerCara($("avatar-mini"), prefs().avatar); pintarMonedas(); }
     window.scrollTo(0, 0);
+    if (mover && $("vista-" + v).animate) $("vista-" + v).animate([{ opacity: 0, transform: "translateX(12px)" }, { opacity: 1, transform: "none" }], { duration: 170, easing: "ease-out" });
   }
   function hexA(hex, a) { var n = parseInt(hex.slice(1), 16); return "rgba(" + (n >> 16) + "," + ((n >> 8) & 255) + "," + (n & 255) + "," + a + ")"; }
   function coloresTablero() {
@@ -4552,7 +4802,7 @@ Motor.ponerLibros(JSON.parse(document.getElementById("libros").textContent));
     raiz.style.setProperty("--tam-pieza", pr.tam + "%");
     raiz.setAttribute("data-textura", pr.textura);
     if (pr.pantalla === "auto") raiz.removeAttribute("data-theme"); else raiz.setAttribute("data-theme", pr.pantalla);
-    $("logo").src = img(pr.piezas, "w", "n");
+    $("logo").src = IMAGENES["animales/profe"];
     if (yo()) ponerCara($("avatar-mini"), pr.avatar);
   }
 
@@ -4790,6 +5040,14 @@ Motor.ponerLibros(JSON.parse(document.getElementById("libros").textContent));
 
   function botones(lista) {
     ["btn-saltar", "btn-siguiente", "btn-otra", "btn-torneo-seguir", "btn-reintentar", "btn-deshacer", "btn-rendirse"].forEach(function (b) { $(b).hidden = lista.indexOf(b) < 0; });
+    var siguiente = lista.filter(function (id) { return /^(btn-siguiente|btn-otra|btn-torneo-seguir|btn-reintentar|btn-saltar)$/.test(id); })[0];
+    if (siguiente) requestAnimationFrame(function () {
+      var b = $(siguiente);
+      if (vistaActual !== "juego" || b.hidden) return;
+      var r = b.getBoundingClientRect(), reducir = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+      if (r.bottom > window.innerHeight - 12 || r.top < 78) b.scrollIntoView({ block: "nearest", behavior: reducir ? "instant" : "smooth" });
+      b.classList.remove("accion-lista"); void b.offsetWidth; b.classList.add("accion-lista");
+    });
   }
   function prepararPanel(modo) {
     $("rival").hidden = modo !== "animal"; $("capturas").hidden = modo !== "animal"; $("jugadas").hidden = modo !== "animal"; $("relojes").hidden = true;
@@ -4874,7 +5132,7 @@ Motor.ponerLibros(JSON.parse(document.getElementById("libros").textContent));
       var pr0 = finResuelto({ modo: "ejercicio", nivel: nivel, ejercicio: ej.id, tipo: "fin", fin: "resuelto", intento: intento, ms: ahora - t0 });
       msg((motivo === "jaque" ? "<b>¡Jaque!</b>" + (ej.tipo === "jaque_seguro" ? " Y tu pieza queda a salvo." : " El rey está atacado.")
         : nivel === "mate" ? "<b>¡Jaque mate!</b> El rey no tiene adónde ir." : "<b>¡Bien!</b> Esa pieza estaba sola y ahora es tuya.") + pr0, "ok");
-      botones(["btn-siguiente"]); $("btn-siguiente").focus();
+      botones(["btn-siguiente"]); $("btn-siguiente").focus({ preventScroll: true });
       return;
     }
     var txt = {
@@ -5080,6 +5338,7 @@ Motor.ponerLibros(JSON.parse(document.getElementById("libros").textContent));
     if (nota === 10) festejar("nota-excelente");
     msg('<div class="nota-caja"><span class="nota-num ' + claseNota(nota) + '">' + nota + '</span><span class="nota-txt">' + etiquetaNota(nota) + "</span></div>" +
       "Sumaste " + String(Math.round(suma * 10) / 10).replace(".", ",") + " puntos en " + lista.length + " problemas." +
+      (nota >= NOTA_MIN ? '<br><span class="premio-monedas">+' + (nota === 10 ? 10 : 5) + " monedas por aprobar</span>" : "") +
       (Object.keys(ganadas).length ? '<br><span class="premio">En este nivel ganaste: ' + Object.keys(ganadas).map(function (k) {
         var x = comidaPor(k); return '<span class="e">' + dib(x.e) + "</span> " + x.n + " × " + ganadas[k]; }).join(", ") + "</span>" : "") +
       (mejorAntes && nota > mejorAntes ? "<br><b>¡Mejoraste tu nota en este nivel!</b> Tu mejor nota era " + mejorAntes + "." : mejorAntes && nota < mejorAntes ? "<br>Tu mejor nota en este nivel sigue siendo " + mejorAntes + "." : "") +
@@ -5103,7 +5362,7 @@ Motor.ponerLibros(JSON.parse(document.getElementById("libros").textContent));
     Sonido.sonar("bien"); if (c) setTimeout(function () { Sonido.sonar("comida"); }, 550);
     puntuar(ev);
     registrar(ev);
-    return c ? '<br><span class="premio">Ganaste: <span class="e">' + dib(c.e) + "</span> " + COMIDA_POR_PROBLEMA + " " + c.n.toLowerCase() + "</span>" : "";
+    return '<br><span class="premio-monedas">+1 moneda</span>' + (c ? '<br><span class="premio">Ganaste: <span class="e">' + dib(c.e) + "</span> " + COMIDA_POR_PROBLEMA + " " + c.n.toLowerCase() + "</span>" : "");
   }
   // los finales sin resolver también cuentan para la nota (valen 0)
   function finSinResolver(ev) { puntuar(ev); registrar(ev); }
@@ -5112,7 +5371,7 @@ Motor.ponerLibros(JSON.parse(document.getElementById("libros").textContent));
     var n = {};
     memoria.eventos.forEach(function (e) {
       if (e.jugador !== memoria.actual) return;
-      if (e.tipo === "sobre") { Object.keys(e.consumo || {}).forEach(function (c) { n[c] = (n[c] || 0) - e.consumo[c]; }); return; }   // v0.23: el kiosco
+      if (e.tipo === "sobre" || e.tipo === "venta_comida") { Object.keys(e.consumo || {}).forEach(function (c) { n[c] = (n[c] || 0) - e.consumo[c]; }); return; }   // incluye sobres antiguos pagados con comida
       if (!e.comida) return;
       if (e.tipo !== "alimentar") { n[e.comida] = (n[e.comida] || 0) + (e.cantidad || 1); return; }
       // lo gastado en hacer comer (desde v0.10, por comida del menú; antes, todo de la comida principal)
@@ -5530,7 +5789,7 @@ Motor.ponerLibros(JSON.parse(document.getElementById("libros").textContent));
       cont.appendChild(caja);
     });
   }
-  $("seg-color").onclick = function (e) { var c = e.target.dataset && e.target.dataset.c; if (!c) return; guardarPref("color", c); pintarAnimales(); };
+  $("seg-color").onclick = function (e) { var c = e.target.dataset && e.target.dataset.c; if (!c) return; coloresSesion[memoria.actual] = c; guardarPref("color", c); pintarAnimales(); };
   $("seg-modo").onclick = function (e) { var m = e.target.dataset && e.target.dataset.m; if (!m) return; guardarPref("modoPartida", m); pintarAnimales(); };
 
   // ---------- modos de partida, reloj y Elo (v0.20, fallos de Damián) ----------
@@ -5688,7 +5947,7 @@ Motor.ponerLibros(JSON.parse(document.getElementById("libros").textContent));
       if (i === ANIMALES.length - 1 || (i >= 0 && nueva && profeDespierto() && !sig)) sig = null;
       var profeNuevo = nueva && i >= 0 && profeDespierto() && ANIMALES.filter(function (a) { var x = l[a.id]; return x && (x.w || x.b); }).length === ANIMALES.length && !(l.profe && (l.profe.w || l.profe.b));
       var colorFig = colorPartida === "w" ? "blanca" : "negra", yaTenia = colorPartida === "w" ? antes.w : antes.b;
-      txt = "<b>¡Le ganaste a " + el(animal) + "!</b> " +
+      txt = "<b>¡Le ganaste a " + el(animal) + "!</b> <span class=\"premio-monedas\">+" + ev.monedas + " monedas</span> " +
         (yaTenia ? "Ya tenías su figurita " + colorFig + "." : "Ganaste su figurita " + colorFig + ".") +
         (nueva && sig && sig.id === "leon" ? " Se despertó " + el(sig) + "." : "") + (profeNuevo && !sig ? " <b>¡Se despertó el Profe Damián!</b>" : "") +
         (!(l[animal.id].w && l[animal.id].b) ? " Gánale con " + (colorPartida === "w" ? "negras" : "blancas") + " para la otra." : "");
@@ -5784,7 +6043,7 @@ Motor.ponerLibros(JSON.parse(document.getElementById("libros").textContent));
   function torneosJugados() { return memoria.eventos.filter(function (e) { return e.jugador === memoria.actual && e.tipo === "torneo_fin" && e.puesto; }); }
   function fmtPuntos(p) { return String(p).replace(".5", " y medio").replace(/^0 y medio$/, "medio"); }
   function pintarTorneos() {
-    var j = yo(), t = j.torneo, ep = eloPrincipal(), conReloj = !!prefs().torneoReloj;
+    var j = yo(), t = j.torneo, ep = eloPrincipal(), conReloj = relojNuevoTorneo;
     var riv = t ? t.rivales.map(function (r) { return { a: animalDe(r.a), et: r.et, elo: animalDe(r.a).etapas[r.et].elo }; }) : rivalesTorneo(ep.elo);
     Array.prototype.forEach.call($("seg-torneo-reloj").children, function (b) { b.setAttribute("aria-pressed", String((b.dataset.r === "1") === (t ? t.reloj : conReloj))); b.disabled = !!t; });
     var pts = t ? t.res.reduce(function (s, x) { return s + x; }, 0) : 0;
@@ -5807,12 +6066,12 @@ Motor.ponerLibros(JSON.parse(document.getElementById("libros").textContent));
     } else if (!t && riv.length < TORNEO_RONDAS) { m.textContent = "Para un torneo hacen falta 5 rivales despiertos."; m.hidden = false; m.className = "mensaje"; }
     else m.hidden = true;
   }
-  function abrirTorneos() { pintarTorneos(); mostrar("torneos"); }
+  function abrirTorneos() { if (!yo().torneo) relojNuevoTorneo = false; pintarTorneos(); mostrar("torneos"); }
   function jugarRonda() {
     var j = yo(), t = j.torneo;
     if (!t) {
       var riv = rivalesTorneo(eloPrincipal().elo); if (riv.length < TORNEO_RONDAS) return;
-      t = j.torneo = { id: Date.now().toString(36), reloj: !!prefs().torneoReloj, rivales: riv.map(function (r) { return { a: r.a.id, et: r.et }; }), res: [] };
+      t = j.torneo = { id: Date.now().toString(36), reloj: relojNuevoTorneo, rivales: riv.map(function (r) { return { a: r.a.id, et: r.et }; }), res: [] };
       registrar({ modo: "torneo", tipo: "torneo_inicio", torneo: t.id, motivo: t.rivales.map(function (r) { return r.a + ":" + r.et; }).join(","), modo_partida: t.reloj ? "rapida_seria" : "seria" });
     }
     var r = t.rivales[t.res.length], ronda = t.res.length + 1;
@@ -5826,10 +6085,10 @@ Motor.ponerLibros(JSON.parse(document.getElementById("libros").textContent));
     if (t.res.length < TORNEO_RONDAS) return "<br><b>Torneo:</b> ronda " + pt.ronda + " de " + TORNEO_RONDAS + " jugada.";
     var puesto = puestoTorneo(t.res), pts = t.res.reduce(function (s, x) { return s + x; }, 0), pr = premioTorneo(puesto);
     registrar({ modo: "torneo", tipo: "torneo_fin", torneo: t.id, puesto: puesto, puntos: pts, reloj: t.reloj, motivo: t.res.join(","), modo_partida: t.reloj ? "rapida_seria" : "seria" });
-    j.torneo = null; guardar();
+    j.torneo = null; relojNuevoTorneo = false; guardar();
     Sonido.sonar(puesto === 1 ? "nota_buena" : "bien");
     festejar("torneo-" + pr.k.replace("copa_", ""));   // los id de M no llevan guion bajo
-    return '<br><span class="premio"><span class="e">' + copa(pr.k, pr.e) + "</span> <b>Terminó el torneo.</b> " + pr.n + "</span>";
+    return '<br><span class="premio"><span class="e">' + copa(pr.k, pr.e) + "</span> <b>Terminó el torneo.</b> " + pr.n + "</span><br><span class=\"premio-monedas\">+" + (puesto === 1 ? 30 : puesto === 2 ? 20 : puesto === 3 ? 10 : 5) + " monedas</span>";
   }
   $("btn-torneo-jugar").onclick = jugarRonda;
   $("btn-torneo-seguir").onclick = abrirTorneos;
@@ -5837,9 +6096,9 @@ Motor.ponerLibros(JSON.parse(document.getElementById("libros").textContent));
     var j = yo(), t = j.torneo; if (!t) return;
     if (!window.confirm("¿Dejar el torneo? Lo que jugaste no da premio.")) return;
     registrar({ modo: "torneo", tipo: "torneo_fin", torneo: t.id, abandonado: true, motivo: t.res.join(","), modo_partida: t.reloj ? "rapida_seria" : "seria" });
-    j.torneo = null; guardar(); pintarTorneos();
+    j.torneo = null; relojNuevoTorneo = false; guardar(); pintarTorneos();
   };
-  $("seg-torneo-reloj").onclick = function (e) { var b = e.target.closest && e.target.closest("button"); if (!b || yo().torneo) return; guardarPref("torneoReloj", b.dataset.r === "1"); pintarTorneos(); };
+  $("seg-torneo-reloj").onclick = function (e) { var b = e.target.closest && e.target.closest("button"); if (!b || yo().torneo) return; relojNuevoTorneo = b.dataset.r === "1"; guardarPref("torneoReloj", relojNuevoTorneo); pintarTorneos(); };
   $("btn-torneos-volver").onclick = function () { pintarInicio(); mostrar("inicio"); };
 
   // ---------- Mis notas y mi nivel (v0.20, pedido de Damián: "una sección de notas y progreso ... el alumno va a querer mejorar
@@ -5936,10 +6195,8 @@ Motor.ponerLibros(JSON.parse(document.getElementById("libros").textContent));
   // ---------- Álbum de figuritas (v0.23, pedido de Damián: "una sección de álbum de figuritas, donde el jugador tiene que ir
   // completando todas las figuritas, que se consiguen canjeando por comida, ganando partidas, completando niveles, llegando a un
   // determinado elo") ----------
-  // Casi todas se ganan jugando y se calculan de lo guardado (nada se puede perder). Las de comidas y adornos salen en los sobres
-  // del kiosco: 2 comidas iguales por un sobre de 2 figuritas, y cada repetida se cambia por un caramelo ("cambiar comida por
-  // dibujos y dibujos por comida"). Un sobre nunca vale menos de lo que cuesta ni deja ganar comida de más: 2 comidas → como mucho
-  // 2 caramelos. Los dibujos de las insignias son optativos (imagenes/insignias/, del pedido a ChatGPT); sin ellos va una medalla.
+  // v0.28: las figuritas antiguas conservan sus IDs y sus condiciones. Se suman únicamente imágenes existentes.
+  // Cada sobre cuesta 10 monedas. Las repetidas dan 1, 2 o 3 monedas según su rareza, siempre menos que el sobre.
   var INSIGNIAS_NOTA = [
     { id: "mejorar", n: "Tienes que mejorar", e: "🌱" }, { id: "regular", n: "Regular", e: "🙂" }, { id: "bien", n: "Bien", e: "👍" },
     { id: "muy_bien", n: "Muy bien", e: "⭐" }, { id: "excelente", n: "Excelente", e: "🏆" }
@@ -5958,7 +6215,10 @@ Motor.ponerLibros(JSON.parse(document.getElementById("libros").textContent));
     var E = elos(); MODOS.forEach(function (x) { if (E[x.id].elo > m) m = E[x.id].elo; });
     return m;
   }
-  var SOBRE_COSTO = 2, SOBRE_FIGURITAS = 2;
+  var SOBRE_COSTO = 10, SOBRE_FIGURITAS = 2;
+  var RAREZAS = { comun: { n: "Común", peso: 6, monedas: 1 }, especial: { n: "Especial", peso: 3, monedas: 2 }, brillante: { n: "Brillante", peso: 1, monedas: 3 } };
+  function valorComida(cid) { var i = COMIDAS.map(function (c) { return c.id; }).indexOf(cid); return i < 0 ? 0 : i < 6 ? 1 : i < 12 ? 2 : 3; }
+  function rarezaHTML(f) { return '<span class="rareza">' + RAREZAS[f.rareza].n + '</span>'; }
   var proximoSobre = null;   // para la prueba: lo que trae el próximo sobre
   function enSobres() {
     var c = memoria.eventos, n = {};
@@ -6013,14 +6273,48 @@ Motor.ponerLibros(JSON.parse(document.getElementById("libros").textContent));
       { id: "torneo_medalla", n: "Medalla del torneo", html: copa("medalla", "🏅"), tiene: tj.length > 0, como: "Juega un torneo entero, las 5 rondas." },
       { id: "torneo_reloj", n: "Campeón con reloj", html: medalla("logro_campeon_reloj", "⏱️"), tiene: tj.some(function (e) { return e.puesto === 1 && e.reloj; }), como: "Gana un torneo con reloj." }] });
     // del kiosco: las comidas y los adornos
+    pags.push({ id: "recuerdos", n: "Mi club", que: "Dos recuerdos especiales en los sobres del kiosco.", kiosco: true, figs: [
+      { id: "club_pintar", n: "El taller de Pintar", imagen: "secciones/pintar", rareza: "especial" },
+      { id: "club_desafios", n: "La copa de los desafíos", imagen: "secciones/desafios", rareza: "brillante" }
+    ].map(function (f) {
+      f.html = imgk(f.imagen); f.tiene = (sobres[f.id] || 0) > 0; f.cuantas = sobres[f.id] || 0;
+      f.como = "Sale en los sobres del kiosco. " + RAREZAS[f.rareza].n + "."; return f;
+    }) });
     pags.push({ id: "comidas", n: "Comidas", que: "Salen en los sobres del kiosco.", kiosco: true, figs: COMIDAS.map(function (c) {
       return { id: "comida_" + c.id, n: c.n, html: dib(c.e), tiene: (sobres["comida_" + c.id] || 0) > 0, cuantas: sobres["comida_" + c.id] || 0, como: "Sale en los sobres del kiosco." }; }) });
     var adornos = Object.keys(IMAGENES).filter(function (k) { return k.indexOf("adornos/") === 0; }).sort();
     if (adornos.length) pags.push({ id: "adornos", n: "Adornos", que: "Salen en los sobres del kiosco.", kiosco: true, figs: adornos.map(function (k) {
       var id = "adorno_" + k.slice(8);
       return { id: id, n: k.slice(8).charAt(0).toUpperCase() + k.slice(9), html: imgk(k), tiene: (sobres[id] || 0) > 0, cuantas: sobres[id] || 0, como: "Sale en los sobres del kiosco." }; }) });
-    pags.forEach(function (p) { p.figs.forEach(function (f) { f.pag = p.id; }); });
-    return pags;
+    [
+      { grupo: "tutoriales", id: "ilustraciones", n: "Ideas del ajedrez", prefijo: "tutorial_", rareza: "especial" },
+      { grupo: "infografias", id: "infografias", n: "Tableros brillantes", prefijo: "infografia_", rareza: "brillante" },
+      { grupo: "laminas", id: "laminas", n: "Mi taller", prefijo: "lamina_", rareza: "especial" }
+    ].forEach(function (coleccion) {
+      var ks = Object.keys(IMAGENES).filter(function (k) { return k.indexOf(coleccion.grupo + "/") === 0; }).sort();
+      var figs = ks.map(function (k) {
+        var clave = k.slice(coleccion.grupo.length + 1), id = coleccion.prefijo + clave;
+        var tema = TUTORIALES.filter(function (t) { return t.id === clave; })[0];
+        var nombre = tema ? tema.titulo : clave.replace(/_/g, " "); nombre = nombre.charAt(0).toUpperCase() + nombre.slice(1);
+        return { id: id, n: nombre, html: imgk(k), imagen: k, rareza: coleccion.rareza,
+          tiene: (sobres[id] || 0) > 0, cuantas: sobres[id] || 0, como: "Sale en los sobres del kiosco. " + RAREZAS[coleccion.rareza].n + "." };
+      });
+      if (figs.length) pags.push({ id: coleccion.id, n: coleccion.n, que: "Encuéntralas en los sobres. Cada dibujo ya forma parte del juego.", kiosco: true, figs: figs });
+    });
+    var paginas = [], numeroFigurita = 0;
+    pags.forEach(function (p) {
+      p.figs.forEach(function (f) {
+        f.pag = p.id; f.kiosco = !!p.kiosco; f.numero = ++numeroFigurita;
+        f.rareza = f.rareza || (/^gigante_|^torneo_oro$|^excelentes_10$/.test(f.id) ? "brillante" : /^(grande_|pieza_|adorno_)/.test(f.id) ? "especial" : "comun");
+      });
+      for (var i = 0; i < p.figs.length; i += 9) {
+        var figsHoja = p.figs.slice(i, i + 9), numeroHoja = paginas.length + 1;
+        figsHoja.forEach(function (f) { f.hoja = numeroHoja; });
+        paginas.push({ id: p.id + (i ? "-" + (i / 9 + 1) : ""), n: p.n, numero: numeroHoja,
+          que: p.que, kiosco: p.kiosco, figs: figsHoja });
+      }
+    });
+    return paginas;
   }
   function todasLasFiguritas() { return figuritasAlbum().reduce(function (s, p) { return s.concat(p.figs); }, []); }
   function figuritasNuevas() { var j = yo(), visto = (j && j.albumVisto) || []; return todasLasFiguritas().filter(function (f) { return f.tiene && visto.indexOf(f.id) < 0; }); }
@@ -6028,16 +6322,20 @@ Motor.ponerLibros(JSON.parse(document.getElementById("libros").textContent));
   function pintarAlbum() {
     var pags = figuritasAlbum(), todas = pags.reduce(function (s, p) { return s.concat(p.figs); }, []), j = yo(), visto = j.albumVisto || [];
     var tiene = todas.filter(function (f) { return f.tiene; }).length;
-    $("kiosco-sobre").innerHTML = IMAGENES["album/sobre"] ? '<img class="dibujo sobre" alt="" src="' + IMAGENES["album/sobre"] + '">' : "";
+    var sobreHTML = IMAGENES["album/sobre"] ? '<img class="dibujo sobre" alt="" src="' + IMAGENES["album/sobre"] + '">' : "";
+    $("kiosco-sobre").innerHTML = sobreHTML; $("sobre-compra").innerHTML = sobreHTML;
     $("album-sub").textContent = "Tienes " + tiene + " de " + todas.length + " figuritas. Toca una para ver cómo se gana.";
-    // el kiosco: 2 comidas iguales por un sobre; las repetidas, por caramelos
-    var d = despensa(), conDos = COMIDAS.filter(function (c) { return (d[c.id] || 0) >= SOBRE_COSTO; });
-    $("kiosco-comidas").innerHTML = conDos.length ? conDos.map(function (c) {
-      return '<button class="btn-secundario btn-sobre" data-c="' + c.id + '"><span class="e">' + dib(c.e) + "</span> " + SOBRE_COSTO + " " + c.n.toLowerCase() + " → 1 sobre<small>tienes " + d[c.id] + "</small></button>";
-    }).join("") : '<span class="sub">Necesitas 2 comidas iguales. Las ganas resolviendo problemas.</span>';
+    $("btn-comprar-sobre").disabled = monedas() < SOBRE_COSTO || !!abiertoSobre || !!pegado;
+    $("sobre-precio").textContent = SOBRE_COSTO + " monedas";
+    $("kiosco-aviso").textContent = monedas() < SOBRE_COSTO ? "Te faltan " + (SOBRE_COSTO - monedas()) + " monedas para un sobre. Resuelve problemas o vende comida." : "¡Tu próximo sobre te está esperando!";
+    var d = despensa();
+    $("kiosco-comidas").innerHTML = COMIDAS.map(function (c) {
+      return '<button class="btn-venta" data-c="' + c.id + '"' + ((d[c.id] || 0) < 1 ? " disabled" : "") + '><span class="e">' + dib(c.e) + "</span><b>" + c.n + "</b><span>Vender 1 · +" + valorComida(c.id) + " monedas</span><small>Te quedan " + (d[c.id] || 0) + "</small></button>";
+    }).join("");
     var reps = todas.filter(function (f) { return (f.cuantas || 0) > 1; }), nRep = reps.reduce(function (s, f) { return s + f.cuantas - 1; }, 0);
     $("btn-canjear-repetidas").hidden = !nRep;
-    $("btn-canjear-repetidas").innerHTML = "Cambiar " + (nRep === 1 ? "1 repetida por 1 caramelo" : nRep + " repetidas por " + nRep + " caramelos") + ' <span class="e">' + dib("🍬") + "</span>";
+    var valorRep = reps.reduce(function (s, f) { return s + (f.cuantas - 1) * RAREZAS[f.rareza].monedas; }, 0);
+    $("btn-canjear-repetidas").textContent = "Cambiar " + nRep + (nRep === 1 ? " repetida" : " repetidas") + " · +" + valorRep + " monedas";
     // v0.27: el álbum es un libro: primero la tapa y después una página por pantalla (se pasan con las flechas o deslizando)
     $("album-paginas").innerHTML = '<div class="pagina-album portada"><div class="tapa">' + (IMAGENES["album/sobre"] ? '<img class="dibujo" alt="" src="' + IMAGENES["album/sobre"] + '">' : "") +
       "<h3>Mi álbum</h3><p>" + tiene + " de " + todas.length + " figuritas</p><p class=\"sub\">Pasa la página ▶</p></div></div>" + pags.map(function (p) {
@@ -6045,13 +6343,12 @@ Motor.ponerLibros(JSON.parse(document.getElementById("libros").textContent));
       return '<div class="pagina-album' + (t === p.figs.length ? " completa" : "") + '" id="pagina-' + p.id + '"><h3>' + p.n + " <small>" + t + " de " + p.figs.length + "</small></h3><p class=\"sub\">" + p.que + '</p><div class="hojas">' +
         p.figs.map(function (f) {
           var nueva = f.tiene && visto.indexOf(f.id) < 0;
-          return '<button class="fig-album ' + (f.tiene ? "tiene" : "falta") + (nueva ? " nueva" : "") + '" data-f="' + f.id + '" aria-label="' + esc(f.n) + (f.tiene ? "" : ", todavía no") + '">' +
-            '<span class="fig-img">' + (f.html || "?") + "</span><span class=\"fig-n\">" + esc(f.n) + "</span>" + ((f.cuantas || 0) > 1 ? '<span class="rep">×' + f.cuantas + "</span>" : "") + "</button>";
-        }).join("") + "</div></div>";
+          return '<button class="fig-album ' + (f.tiene ? "tiene" : "falta") + (nueva ? " nueva pendiente" : "") + ' rareza-' + f.rareza + '" data-rareza="' + f.rareza + '" data-f="' + f.id + '" data-numero="' + f.numero + '" aria-label="' + f.numero + ". " + esc(f.n) + ", " + RAREZAS[f.rareza].n + (f.tiene ? "" : ", todavía no") + '">' +
+            '<span class="fig-numero">' + f.numero + '</span><span class="fig-img">' + (f.html || "?") + "</span><span class=\"fig-n\">" + esc(f.n) + "</span>" + rarezaHTML(f) + ((f.cuantas || 0) > 1 ? '<span class="rep">×' + f.cuantas + "</span>" : "") + "</button>";
+        }).join("") + '</div><span class="hoja-numero" aria-label="Hoja ' + p.numero + '">' + p.numero + "</span></div>";
     }).join("");
     $("album-paginas").scrollLeft = 0; paginaVista = 0; paginaLibro();
-    // se marcan como vistas: la próxima vez ya no brillan
-    j.albumVisto = todas.filter(function (f) { return f.tiene; }).map(function (f) { return f.id; }); guardar();
+    actualizarPegado();
   }
   var paginaVista = 0;
   function paginaLibro() {
@@ -6061,52 +6358,145 @@ Motor.ponerLibros(JSON.parse(document.getElementById("libros").textContent));
       pg.classList.remove("gira-sig", "gira-ant"); void pg.offsetWidth; pg.classList.add(dir);
       paginaVista = i;
     }
-    $("libro-pag").textContent = i === 0 ? "Tapa" : "Página " + i + " de " + (n - 1);
-    $("libro-ant").disabled = i <= 0; $("libro-sig").disabled = i >= n - 1;
+    $("libro-pag").textContent = i === 0 ? "Tapa" : "Hoja " + i + " de " + (n - 1);
+    $("libro-ant").disabled = !!pegado || i <= 0; $("libro-sig").disabled = !!pegado || i >= n - 1;
   }
   $("album-paginas").addEventListener("scroll", function () { paginaLibro(); }, { passive: true });
   $("libro-ant").onclick = function () { var l = $("album-paginas"); l.scrollBy({ left: -l.clientWidth, behavior: "smooth" }); };
   $("libro-sig").onclick = function () { var l = $("album-paginas"); l.scrollBy({ left: l.clientWidth, behavior: "smooth" }); };
-  function abrirAlbum() { abiertoSobre = null; $("sobre-abierto").hidden = true; pintarAlbum(); mostrar("album"); }
+  window.addEventListener("resize", paginaLibro);
+  $("album-paginas").addEventListener("load", paginaLibro, true);
+  function abrirAlbum() { cancelarPegado(); abiertoSobre = null; $("sobre-abierto").hidden = true; $("pegar-resumen").hidden = true; pintarAlbum(); mostrar("album"); paginaLibro(); }
+  var pegado = null;
+  function actualizarPegado() {
+    var n = figuritasNuevas().length;
+    $("btn-pegar").hidden = !!pegado || !n; $("btn-pegar-todas").hidden = !n && !pegado;
+    $("btn-pegar").disabled = $("btn-pegar-todas").disabled = !!abiertoSobre;
+    $("album-paginas").classList.toggle("en-pegado", !!pegado);
+    if (!pegado) $("pegar-mensaje").textContent = abiertoSobre ? "Descubre las dos figuritas del sobre." : n ? n + (n === 1 ? " figurita para pegar." : " figuritas para pegar.") : "Tus figuritas están pegadas. ¡Sigue completando tu álbum!";
+    paginaLibro();
+  }
+  function cancelarPegado() {
+    if (!pegado) return;
+    pegado = null;
+    Array.prototype.forEach.call(document.querySelectorAll(".fig-album.pegando"), function (b) { b.classList.remove("pegando"); });
+    $("album-paginas").classList.remove("en-pegado");
+  }
+  function irHoja(numero, mover) {
+    var l = $("album-paginas");
+    l.scrollTo({ left: numero * l.clientWidth, behavior: mover ? "smooth" : "instant" });
+    if (!mover) paginaLibro();
+  }
+  function marcarPegada(f) {
+    var j = yo(); j.albumVisto = j.albumVisto || [];
+    if (j.albumVisto.indexOf(f.id) < 0) j.albumVisto.push(f.id);
+    var b = $("album-paginas").querySelector('[data-f="' + f.id + '"]');
+    if (b) b.classList.remove("nueva", "pendiente", "pegando");
+  }
+  function terminarPegado(job) {
+    if (pegado !== job) return;
+    pegado = null; guardar(); actualizarPegado();
+    $("pegar-resumen").innerHTML = "<b>¡Ya están en tu álbum!</b><ul>" + job.resultados.map(function (f) { return "<li>" + esc(f.n) + " → hoja " + f.hoja + " · figurita " + f.numero + "</li>"; }).join("") + "</ul>";
+    $("pegar-resumen").hidden = false;
+    $("pegar-mensaje").textContent = "¡Listo! Tus figuritas quedaron pegadas.";
+    $("btn-comprar-sobre").disabled = monedas() < SOBRE_COSTO || !!abiertoSobre;
+  }
+  function colaPegado() { return figuritasNuevas().sort(function (a, b) { return a.hoja - b.hoja || a.numero - b.numero; }); }
+  function pegarTodasYa() {
+    if (abiertoSobre) return;
+    var job = pegado || { jugador: memoria.actual, resultados: [] }, nuevas = colaPegado();
+    pegado = job;
+    nuevas.forEach(function (f) { marcarPegada(f); job.resultados.push(f); });
+    var ultima = job.resultados[job.resultados.length - 1];
+    if (ultima) irHoja(ultima.hoja, false);
+    terminarPegado(job);
+  }
+  async function pegarFiguritas() {
+    if (pegado || abiertoSobre) return;
+    var cola = colaPegado(); if (!cola.length) return;
+    var job = pegado = { jugador: memoria.actual, resultados: [] };
+    $("pegar-resumen").hidden = true; actualizarPegado(); $("btn-comprar-sobre").disabled = true;
+    var pausa = function (ms) { return new Promise(function (ok) { setTimeout(ok, ms); }); };
+    var activo = function () { return pegado === job && vistaActual === "album" && memoria.actual === job.jugador; };
+    for (var k = 0; k < cola.length; k++) {
+      var f = cola[k], reducir = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+      $("pegar-mensaje").textContent = f.n + " → hoja " + f.hoja + " · figurita " + f.numero;
+      irHoja(f.hoja, !reducir);
+      if (!reducir) await pausa(850);
+      if (!activo()) return;
+      var b = $("album-paginas").querySelector('[data-f="' + f.id + '"]');
+      b.closest(".pagina-album").querySelector(".hoja-numero").scrollIntoView({ block: "end", behavior: "instant" });
+      if (!reducir) {
+        b.style.setProperty("--vuelo-y", Math.max(160, window.innerHeight - b.getBoundingClientRect().top + 50) + "px");
+        b.classList.add("pegando"); await pausa(1000);
+      } else await pausa(0);
+      if (!activo()) return;
+      marcarPegada(f); job.resultados.push(f); guardar();
+      if (!reducir) await pausa(180);
+    }
+    terminarPegado(job);
+  }
+  $("btn-pegar").onclick = pegarFiguritas;
+  $("btn-pegar-todas").onclick = pegarTodasYa;
   function sortear() {
-    var del = todasLasFiguritas().filter(function (f) { return /^(comida|adorno)_/.test(f.id); }).map(function (f) { return f.id; });
-    var out = proximoSobre || []; proximoSobre = null;
+    var del = [];
+    todasLasFiguritas().filter(function (f) { return f.kiosco; }).forEach(function (f) { for (var k = 0; k < RAREZAS[f.rareza].peso; k++) del.push(f.id); });
+    var out = (proximoSobre || []).filter(function (id) { return del.indexOf(id) >= 0; }); proximoSobre = null;
     while (out.length < SOBRE_FIGURITAS) out.push(del[Math.floor(Math.random() * del.length)]);
     return out.slice(0, SOBRE_FIGURITAS);
   }
-  function comprarSobre(cid) {
-    var d = despensa(); if ((d[cid] || 0) < SOBRE_COSTO) return;
-    var antes = enSobres(), figs = sortear(), consumo = {}; consumo[cid] = SOBRE_COSTO;
-    registrar({ modo: "album", tipo: "sobre", consumo: consumo, figuritas: figs });
+  function venderComida(cid) {
+    if (pegado) return false;
+    if (!comidaPor(cid) || (despensa()[cid] || 0) < 1) return false;
+    var consumo = {}; consumo[cid] = 1;
+    if (!registrar({ modo: "album", tipo: "venta_comida", comida: cid, cantidad: 1, consumo: consumo, monedas: valorComida(cid) })) return false;
+    pintarAlbum(); $("kiosco-aviso").textContent = "Vendiste 1 " + comidaPor(cid).n.toLowerCase() + ". +" + valorComida(cid) + " monedas."; return true;
+  }
+  function comprarSobre() {
+    if (monedas() < SOBRE_COSTO || abiertoSobre || pegado) return false;
+    var antes = enSobres(), figs = sortear();
+    if (!registrar({ modo: "album", tipo: "sobre", monedas: -SOBRE_COSTO, figuritas: figs })) return false;
     Sonido.sonar("comida");
     festejar("sobre");
+    abiertoSobre = figs;
     var todas = todasLasFiguritas(), vistas = {};
-    $("sobre-abierto").innerHTML = '<b>¡Abriste un sobre!</b><div class="hojas">' + figs.map(function (id) {
+    $("sobre-abierto").innerHTML = '<b>¡Tu sobre está abierto!</b><p>Toca cada carta para descubrirla.</p><div class="sobre-roto" aria-hidden="true">' + $("sobre-compra").innerHTML + '</div><div class="hojas">' + figs.map(function (id, numero) {
       var f = todas.filter(function (x) { return x.id === id; })[0], rep = (antes[id] || 0) + (vistas[id] || 0) > 0; vistas[id] = 1;
-      return '<span class="fig-album tiene sale"><span class="fig-img">' + f.html + '</span><span class="fig-n">' + esc(f.n) + "</span><span class=\"" + (rep ? "rep-txt" : "nueva-txt") + "\">" + (rep ? "Repetida" : "¡Nueva!") + "</span></span>";
+      return '<button class="carta-sobre" aria-label="Descubrir figurita ' + (numero + 1) + '" aria-pressed="false"><span class="carta-giro"><span class="carta-dorso"><span>?</span><small>Tócame</small></span><span class="fig-album tiene carta-frente rareza-' + f.rareza + '"><span class="fig-img">' + f.html + '</span><span class="fig-n">' + esc(f.n) + '</span>' + rarezaHTML(f) + '<span class="' + (rep ? "rep-txt" : "nueva-txt") + '">' + (rep ? "Repetida" : "¡Nueva!") + '</span></span></span></button>';
     }).join("") + "</div>";
     $("sobre-abierto").hidden = false;
     pintarAlbum();
     $("sobre-abierto").scrollIntoView({ block: "nearest" });
+    $("sobre-abierto").querySelector(".carta-sobre").focus(); return true;
   }
   function canjearRepetidas() {
+    if (abiertoSobre || pegado) return;
     var reps = todasLasFiguritas().filter(function (f) { return (f.cuantas || 0) > 1; }), n = 0;
-    reps.forEach(function (f) { for (var k = 1; k < f.cuantas; k++) { registrar({ modo: "album", tipo: "canje_repetida", figurita: f.id, comida: "caramelo", cantidad: 1 }); n++; } });
+    var ganadas = 0;
+    reps.forEach(function (f) { for (var k = 1; k < f.cuantas; k++) { var valor = RAREZAS[f.rareza].monedas; if (registrar({ modo: "album", tipo: "canje_repetida", figurita: f.id, monedas: valor })) { n++; ganadas += valor; } } });
     if (!n) return;
     Sonido.sonar("comida");
-    $("sobre-abierto").innerHTML = "<b>Cambiaste " + n + (n === 1 ? " repetida por 1 caramelo" : " repetidas por " + n + " caramelos") + ".</b> Están en tu despensa.";
+    $("sobre-abierto").innerHTML = "<b>Cambiaste " + n + (n === 1 ? " repetida" : " repetidas") + " por " + ganadas + " monedas.</b> ¡Tu colección sigue completa!";
     $("sobre-abierto").hidden = false;
     pintarAlbum();
   }
-  $("kiosco-comidas").onclick = function (e) { var b = e.target.closest && e.target.closest("button[data-c]"); if (b) comprarSobre(b.dataset.c); };
+  $("kiosco-comidas").onclick = function (e) { var b = e.target.closest && e.target.closest("button[data-c]"); if (b) venderComida(b.dataset.c); };
+  $("btn-comprar-sobre").onclick = comprarSobre;
+  $("sobre-abierto").onclick = function (e) {
+    var b = e.target.closest && e.target.closest(".carta-sobre"); if (!b || b.classList.contains("revelada")) return;
+    b.classList.add("revelada"); b.setAttribute("aria-pressed", "true");
+    b.setAttribute("aria-label", b.querySelector(".fig-n").textContent + ", " + b.querySelector(".rareza").textContent);
+    if (!$("sobre-abierto").querySelector(".carta-sobre:not(.revelada)")) { abiertoSobre = null; $("btn-comprar-sobre").disabled = monedas() < SOBRE_COSTO; actualizarPegado(); }
+  };
   $("btn-canjear-repetidas").onclick = canjearRepetidas;
   $("album-paginas").onclick = function (e) {
+    if (pegado) return;
     var b = e.target.closest && e.target.closest(".fig-album[data-f]"); if (!b) return;
     var f = todasLasFiguritas().filter(function (x) { return x.id === b.dataset.f; })[0]; if (!f) return;
     var im = b.querySelector("img"), v = $("ver-img");
     v.src = im ? im.src : ""; v.hidden = !im; v.className = ""; v.alt = f.n;
     $("ver-titulo").textContent = f.n; $("ver-frase").textContent = f.tiene ? "¡Ya la tienes!" + ((f.cuantas || 0) > 1 ? " (y " + (f.cuantas - 1) + (f.cuantas === 2 ? " repetida)" : " repetidas)") : "") : "Todavía no la tienes."; $("ver-frase").hidden = false;
-    $("ver-texto").innerHTML = "<li>" + esc(f.como) + "</li>";
+    $("ver-texto").innerHTML = "<li>" + esc(f.como) + "</li><li>" + RAREZAS[f.rareza].n + ((f.cuantas || 0) > 1 ? ": cada repetida se vende por " + RAREZAS[f.rareza].monedas + " monedas." : ".") + "</li>";
     $("ver-dibujo").hidden = false; $("ver-cerrar").focus();
   };
   $("btn-album-volver").onclick = function () { pintarInicio(); mostrar("inicio"); };
@@ -6194,8 +6584,8 @@ Motor.ponerLibros(JSON.parse(document.getElementById("libros").textContent));
   }
   // tocar la infografía la muestra a pantalla completa
   function verInfografia(t) {
-    var v = $("ver-img"); v.src = IMAGENES["infografias/" + t.id]; v.className = "infografia"; v.alt = t.titulo;
-    $("ver-titulo").textContent = t.titulo; $("ver-frase").hidden = true; $("ver-texto").innerHTML = "";
+    var v = $("ver-img"); v.src = IMAGENES["infografias/" + t.id]; v.className = "infografia"; v.alt = nombreVisible(t.titulo);
+    $("ver-titulo").textContent = nombreVisible(t.titulo); $("ver-frase").hidden = true; $("ver-texto").innerHTML = "";
     $("ver-dibujo").hidden = false; $("ver-cerrar").focus();
   }
   // v0.21 (fallo de Damián): "ayuda en el panel general no, porque te aparecen todas las ayudas y es muy confuso". Cada pantalla
@@ -7212,7 +7602,7 @@ Motor.ponerLibros(JSON.parse(document.getElementById("libros").textContent));
     return isNaN(d) ? "" : d.getFullYear() + "-" + z(d.getMonth() + 1) + "-" + z(d.getDate()) + " " + z(d.getHours()) + ":" + z(d.getMinutes());
   }
   var COLS = ["fecha", "hora_local", "dispositivo", "apellido", "nombre", "jugador", "edad", "grupo", "elo_alumno", "v", "contenido", "via", "grado", "comida", "puntos", "nota", "cantidad", "etapa", "modo", "nivel", "ejercicio", "animal", "partida", "color", "elo", "tipo", "intento", "numero", "uci", "san",
-    "resultado", "motivo", "fin", "jugadas", "modo_partida", "elo_juego_antes", "elo_juego_despues", "reloj_mio", "reloj_suyo", "comio", "gratis", "comio_gratis", "colgadas", "dejo_colgada", "deshechas", "ms", "ms_jugada", "fen_antes", "fen", "pgn"];
+    "resultado", "motivo", "fin", "jugadas", "modo_partida", "elo_juego_antes", "elo_juego_despues", "reloj_mio", "reloj_suyo", "comio", "gratis", "comio_gratis", "colgadas", "dejo_colgada", "deshechas", "ms", "ms_jugada", "fen_antes", "fen", "pgn", "monedas", "monedas_antes", "monedas_despues", "motivo_monedas"];
   function csv(filas, cols) {
     var f = function (v) { v = v === undefined || v === null ? "" : String(v); return /[;"\n\r]/.test(v) ? '"' + v.replace(/"/g, '""') + '"' : v; };
     return "﻿" + [cols.join(";")].concat(filas.map(function (r) { return cols.map(function (c) { return f(r[c]); }).join(";"); })).join("\r\n");
@@ -7342,7 +7732,7 @@ Motor.ponerLibros(JSON.parse(document.getElementById("libros").textContent));
         memoria.eventos = memoria.eventos.concat(nuevos); memoria.eventos.sort(function (a, b) { return a.fecha < b.fecha ? -1 : a.fecha > b.fecha ? 1 : 0; });
         guardar(); pintarProfe();
         $("aviso-copia").textContent = "Juntados " + nuevos.length + " registros nuevos del dispositivo " + (otra.dispositivo || "?") + ".";
-      } catch (e) { $("aviso-copia").textContent = "Ese archivo no es una copia de ProfeDamián."; }
+      } catch (e) { $("aviso-copia").textContent = "Ese archivo no es una copia de Profe Damián."; }
     };
     lector.readAsText(f);
   };
@@ -7373,6 +7763,7 @@ Motor.ponerLibros(JSON.parse(document.getElementById("libros").textContent));
   $("btn-creditos-volver").onclick = salir;
 
   // ---------- arranque ----------
+  if (ES_BETA) { var etiquetaBeta = document.createElement("small"); etiquetaBeta.className = "beta-etiqueta"; etiquetaBeta.textContent = "Beta"; $("marca").appendChild(etiquetaBeta); document.title = "Profe Damián · Beta"; }
   leer(); aplicarTema();
   try { if (navigator.storage && navigator.storage.persist) navigator.storage.persist(); } catch (e) {}
   if (yo()) { pintarInicio(); mostrar("inicio"); } else pintarQuien();
@@ -7380,7 +7771,8 @@ Motor.ponerLibros(JSON.parse(document.getElementById("libros").textContent));
     elos: function () { return elos(); },
     reloj: function (cambios) { if (reloj) for (var k in cambios) reloj[k] = cambios[k]; return reloj && { mio: reloj.mio, suyo: reloj.suyo, corre: reloj.corre }; },
     libre: function () { return !bloqueado; },
-    album: function () { var t = todasLasFiguritas(); return { tiene: t.filter(function (f) { return f.tiene; }).map(function (f) { return f.id; }), total: t.length, sobres: enSobres(), nuevas: figuritasNuevas().length, despensa: despensa() }; },
+    album: function () { var t = todasLasFiguritas(); return { tiene: t.filter(function (f) { return f.tiene; }).map(function (f) { return f.id; }), total: t.length, sobres: enSobres(), nuevas: figuritasNuevas().length, pegando: !!pegado, despensa: despensa(), monedas: monedas(), catalogo: t.map(function (f) { return { id: f.id, numero: f.numero, hoja: f.hoja, rareza: f.rareza, como: f.como, imagen: f.imagen, kiosco: f.kiosco }; }) }; },
+    economia: function () { return { monedas: monedas(), premio: premioMonedas, valorComida: valorComida }; },
     proximoSobre: function (x) { proximoSobre = x; },
     torneo: function () { var t = yo().torneo; return { actual: t ? JSON.parse(JSON.stringify(t)) : null, jugados: torneosJugados().map(function (e) { return { puesto: e.puesto, puntos: e.puntos, reloj: e.reloj }; }) }; },
     puestoTorneo: puestoTorneo,
