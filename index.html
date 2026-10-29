@@ -1265,9 +1265,9 @@ body:has(#nav-fija:not([hidden])) { scroll-padding-top: 88px; }
 
   <!-- sopa de letras (v0.18, pedido de Damián: "para familiarizarse con el nombre de las piezas") -->
   <section id="vista-sopa" hidden>
-    <div class="titulo"><h1>Sopa de letras</h1><p class="sub">Busca los nombres escondidos. En línea, toca la primera letra y después la última; a salto de caballo, tócalas una por una.</p></div>
+    <div class="titulo"><h1>Sopa de letras</h1><p class="sub">Busca los nombres escondidos. Toca la primera letra y después la última, o arrastra entre ellas.</p></div>
     <div class="fila"><span>Palabras:</span><div class="segmentos" id="sopa-niveles" role="group" aria-label="Palabras"><button data-n="1">Las piezas</button><button data-n="2">Piezas y jugadas</button><button data-n="3">Para expertos</button></div></div>
-    <div class="fila"><span>Escondidas en:</span><div class="segmentos" id="sopa-tipos" role="group" aria-label="Dónde están"><button data-t="filas">Filas</button><button data-t="columnas">Columnas</button><button data-t="diagonales">Diagonales</button><button data-t="caballo">Salto de caballo</button><button data-t="todo">Todo mezclado</button></div></div>
+    <div class="fila"><span>Escondidas en:</span><div class="segmentos" id="sopa-tipos" role="group" aria-label="Dónde están"><button data-t="filas">Filas</button><button data-t="columnas">Columnas</button><button data-t="diagonales">Diagonales</button><button data-t="todo">Todo mezclado</button></div></div>
     <div class="sopa">
       <div class="sopa-grilla" id="sopa-grilla" role="grid" aria-label="Letras"></div>
       <ul class="sopa-palabras" id="sopa-palabras" aria-label="Palabras para buscar"></ul>
@@ -4605,7 +4605,7 @@ Motor.ponerLibros(JSON.parse(document.getElementById("libros").textContent));
   })(window.Chess);
   var SVG = JSON.parse($("piezas-svg").textContent);
   var ES_BETA = location.protocol !== "file:" && /\/beta(?:\/|$)/.test(location.pathname);
-  var CLAVE = ES_BETA ? "profedamian_beta_v1" : "profedamian_v1", CLAVE_VIEJA = ES_BETA ? "profedamian_beta_vieja" : "ludchess_clase_v2", VERSION = "0.30";
+  var CLAVE = ES_BETA ? "profedamian_beta_v1" : "profedamian_v1", CLAVE_VIEJA = ES_BETA ? "profedamian_beta_vieja" : "ludchess_clase_v2", VERSION = "0.30.1";
   var ANIMALES = Motor.ANIMALES, PROFE = Motor.PROFE, TODOS = ANIMALES.concat([PROFE]);
   TODOS.forEach(function (a) { CLAVE_DE[a.emoji] = "animales/" + a.id; });
 
@@ -4885,7 +4885,7 @@ Motor.ponerLibros(JSON.parse(document.getElementById("libros").textContent));
     PARADAS.forEach(function (p) {
       var b = document.createElement("button"); b.className = "tarjeta"; b.id = "parada-" + p.id;
       var extra = p.id === "pintar" ? '<span class="que">' + misDibujos().length + (misDibujos().length === 1 ? " dibujo guardado" : " dibujos guardados") + "</span>"
-        : p.id === "sopa" ? '<span class="que">' + sopasHechas().length + " de " + SOPAS.length * TIPOS_SOPA.length + " sopas distintas resueltas</span>"
+        : p.id === "sopa" ? '<span class="que">' + sopasHechas().filter(function (k) { return TIPOS_SOPA.some(function (t) { return k.split("-")[1] === t.id; }); }).length + " de " + SOPAS.length * TIPOS_SOPA.length + " sopas distintas resueltas</span>"
         : p.id === "desafios" ? '<span class="que">' + desafiosHechos().length + " de " + DESAFIOS.length + " desafíos superados</span>"
         : p.id === "album" ? (function () { var t = todasLasFiguritas(), n = figuritasNuevas().length; return '<span class="que">' + t.filter(function (f) { return f.tiene; }).length + " de " + t.length + " figuritas</span>" + (n ? '<span class="nuevas">¡' + n + (n === 1 ? " figurita nueva" : " figuritas nuevas") + " para pegar!</span>" : ""); })()
         : p.id === "torneos" ? '<span class="que">' + (yo().torneo ? "Torneo en curso: ronda " + (yo().torneo.res.length + 1) + " de " + TORNEO_RONDAS : torneosJugados().length ? "Mejor puesto: " + Math.min.apply(null, torneosJugados().map(function (e) { return e.puesto; })) + "º" : "Todavía no jugaste ninguno") + "</span>"
@@ -6260,7 +6260,7 @@ Motor.ponerLibros(JSON.parse(document.getElementById("libros").textContent));
     pags.push({ id: "juegos", n: "Desafíos y juegos", que: "Los desafíos, la sopa de letras, Pintar y las partidas.", figs: [
       { id: "desafio_damas", n: "Las ocho damas", html: medalla("logro_ocho_damas", imgk("tutoriales/ocho_damas") || "♕"), tiene: dz.indexOf("damas") >= 0, como: "Resuelve el desafío de las ocho damas." },
       { id: "desafio_caballo", n: "El salto del caballo", html: medalla("logro_salto_caballo", imgk("tutoriales/salto_caballo") || "♘"), tiene: dz.indexOf("caballo") >= 0, como: "Resuelve el desafío del salto del caballo." },
-      { id: "sopa_formas", n: "Sopas de todas las formas", html: medalla("logro_sopa_formas", imgk("secciones/sopa") || "🔤"), tiene: Object.keys(tipos).length >= TIPOS_SOPA.length, como: "Resuelve una sopa de letras de cada forma: filas, columnas, diagonales, salto de caballo y todo mezclado." },
+      { id: "sopa_formas", n: "Sopas de todas las formas", html: medalla("logro_sopa_formas", imgk("secciones/sopa") || "🔤"), tiene: TIPOS_SOPA.every(function (t) { return !!tipos[t.id]; }) || (yo().albumVisto || []).indexOf("sopa_formas") >= 0, como: "Resuelve una sopa de letras de cada forma: filas, columnas, diagonales y todo mezclado." },
       { id: "sopa_palabras", n: "Sopas de todas las palabras", html: medalla("logro_sopa_palabras", "🔠"), tiene: Object.keys(palabras).length >= SOPAS.length, como: "Resuelve una sopa de letras de cada grupo de palabras." },
       { id: "primer_dibujo", n: "Mi primer dibujo", html: medalla("logro_primer_dibujo", imgk("secciones/pintar") || "🖍️"), tiene: memoria.eventos.some(function (e) { return e.jugador === memoria.actual && e.tipo === "dibujo_guardado"; }), como: "Guarda un dibujo en Pintar." },
       { id: "partidas_10", n: "Diez partidas ganadas", html: medalla("logro_partidas_10", "🏅"), tiene: partidasGanadas() >= 10, como: "Gana diez partidas." }] });
@@ -7158,8 +7158,8 @@ Motor.ponerLibros(JSON.parse(document.getElementById("libros").textContent));
 
   // ---------- Sopa de letras (v0.18, pedido de Damián: "sopa de letras para familiarizarse con el nombre de las piezas") ----------
   // v0.21 (fallo de Damián): dos elecciones que se combinan. Las palabras: las seis piezas, piezas y jugadas, para expertos. Cómo
-  // están escondidas: solo en filas, solo en columnas, solo en diagonales, a salto de caballo (cada letra, a un salto de caballo de
-  // la anterior) o todo mezclado. En línea se toca la primera letra y la última (o se arrastra); a salto de caballo, letra por letra.
+  // están escondidas: solo en filas, solo en columnas, solo en diagonales o todo mezclado.
+  // Se toca la primera letra y la última, o se arrastra entre ellas.
   // Al lado de cada palabra va su dibujo: la pieza del juego elegido o el dibujo del tema de la ayuda. La sopa se arma al azar.
   var PALABRAS = {
     REY: { n: "Rey", p: "k" }, DAMA: { n: "Dama", p: "q" }, TORRE: { n: "Torre", p: "r" }, ALFIL: { n: "Alfil", p: "b" }, CABALLO: { n: "Caballo", p: "n" },
@@ -7177,34 +7177,28 @@ Motor.ponerLibros(JSON.parse(document.getElementById("libros").textContent));
     { id: "filas", n: "Filas", dirs: [FILA], como: "Están escritas en las filas, de izquierda a derecha." },
     { id: "columnas", n: "Columnas", dirs: [COLUMNA], como: "Están escritas en las columnas, de arriba abajo." },
     { id: "diagonales", n: "Diagonales", dirs: DIAGONALES, como: "Están escritas en diagonal, de izquierda a derecha." },
-    { id: "caballo", n: "Salto de caballo", caballo: true, como: "Cada letra está a un salto de caballo de la anterior: tócalas una por una." },
-    { id: "todo", n: "Todo mezclado", dirs: [FILA, COLUMNA].concat(DIAGONALES), caballo: true, como: "Hay en filas, en columnas, en diagonal y a salto de caballo." }
+    { id: "todo", n: "Todo mezclado", dirs: [FILA, COLUMNA].concat(DIAGONALES), como: "Hay en filas, en columnas y en diagonal" }
   ];
   var LETRAS_RELLENO = "ABCDEFGHIJLMNOPRSTUVYZ";
   var COLORES_SOPA = ["#f6c945", "#7cc6f2", "#a5d98a", "#f4a3c0", "#c9a7f0", "#ffb37a", "#8fe0d0", "#f28b82", "#d7c27a", "#9db7f5"];
-  var SALTO = [[1, 2], [2, 1], [2, -1], [1, -2], [-1, -2], [-2, -1], [-2, 1], [-1, 2]];
   var sopa = null;
   function claveSopa(n, t) { return n + "-" + t; }
   function sopasHechas() { var h = {}; memoria.eventos.forEach(function (e) { if (e.jugador === memoria.actual && e.tipo === "sopa_fin") h[claveSopa(e.sopa, e.sopa_tipo || "todo")] = 1; }); return Object.keys(h); }
-  function esSalto(a, b) { var dr = Math.abs(a[0] - b[0]), dc = Math.abs(a[1] - b[1]); return dr * dc === 2; }
   function armarSopa(def, tipo) {
     for (var intento = 0; intento < 300; intento++) {
       var L = def.lado, g = [], puestas = [], ok = true, r, c;
       for (r = 0; r < L; r++) { g.push([]); for (c = 0; c < L; c++) g[r].push(""); }
       var ws = def.palabras.slice().sort(function (a, b) { return b.length - a.length; });
-      // en "todo mezclado", una de cada tres va a salto de caballo
       for (var i = 0; i < ws.length && ok; i++) {
-        var w = ws[i], puesta = null, aCaballo = tipo.caballo && (!tipo.dirs || i % 3 === 1);
+        var w = ws[i], puesta = null;
         for (var k = 0; k < 400 && !puesta; k++) {
-          var cs = [[Math.floor(Math.random() * L), Math.floor(Math.random() * L)]], d = aCaballo ? null : tipo.dirs[Math.floor(Math.random() * tipo.dirs.length)];
+          var cs = [[Math.floor(Math.random() * L), Math.floor(Math.random() * L)]], d = tipo.dirs[Math.floor(Math.random() * tipo.dirs.length)];
           for (var j = 1; j < w.length && cs; j++) {
-            var u = cs[j - 1], sig = null;
-            if (d) sig = [u[0] + d[0] * 1, u[1] + d[1] * 1];
-            else { var op = SALTO.map(function (s) { return [u[0] + s[0], u[1] + s[1]]; }).filter(function (x) { return x[0] >= 0 && x[1] >= 0 && x[0] < L && x[1] < L && !cs.some(function (y) { return y[0] === x[0] && y[1] === x[1]; }); }); sig = op[Math.floor(Math.random() * op.length)]; }
+            var u = cs[j - 1], sig = [u[0] + d[0], u[1] + d[1]];
             if (!sig || sig[0] < 0 || sig[1] < 0 || sig[0] >= L || sig[1] >= L) cs = null; else cs.push(sig);
           }
           if (cs && cs.every(function (x, j2) { return !g[x[0]][x[1]] || g[x[0]][x[1]] === w[j2]; })) {
-            cs.forEach(function (x, j2) { g[x[0]][x[1]] = w[j2]; }); puesta = { w: w, celdas: cs, caballo: !d };
+            cs.forEach(function (x, j2) { g[x[0]][x[1]] = w[j2]; }); puesta = { w: w, celdas: cs };
           }
         }
         if (puesta) puestas.push(puesta); else ok = false;
@@ -7255,20 +7249,14 @@ Motor.ponerLibros(JSON.parse(document.getElementById("libros").textContent));
     if (!arrastreSopa || !sopa) return;
     arrastreSopa = false;
     var c = celdaSopa(e.clientX, e.clientY), a = sopa.camino[0];
-    if (c && a && sopa.camino.length === 1 && (c[0] !== a[0] || c[1] !== a[1]) && !esSalto(a, c)) tocarSopa(c);
+    if (c && a && sopa.camino.length === 1 && (c[0] !== a[0] || c[1] !== a[1])) tocarSopa(c);
   });
   function palabraEn(celdas) { return celdas.map(function (x) { return sopa.grilla[x[0]][x[1]]; }).join(""); }
   function tocarSopa(c) {
     var s = sopa, cam = s.camino, u = cam[cam.length - 1];
     if (u && u[0] === c[0] && u[1] === c[1]) return;
-    var faltan = s.def.palabras.filter(function (x) { return !s.halladas[x]; });
-    // a salto de caballo: la letra tocada sigue el camino si está a un salto de la anterior y la palabra sigue siendo posible
-    if (s.tipo.caballo && u && esSalto(u, c) && cam.every(function (x) { return x[0] !== c[0] || x[1] !== c[1]; })) {
-      var txt = palabraEn(cam.concat([c]));
-      if (faltan.some(function (w) { return w.indexOf(txt) === 0; })) { cam.push(c); if (faltan.indexOf(txt) >= 0) return encontrada(txt, cam.slice()); marcarIni(); return; }
-    }
-    // en línea: la segunda letra tocada cierra la palabra
-    if (s.tipo.dirs && cam.length === 1 && !(s.tipo.caballo && esSalto(u, c))) return probarLinea(u, c);
+    // La segunda letra tocada cierra la palabra.
+    if (cam.length === 1) return probarLinea(u, c);
     s.camino = [c]; marcarIni();
   }
   function probarLinea(a, b) {
