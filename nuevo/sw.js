@@ -1,4 +1,4 @@
-const CACHE='ludchess-kids-b28c08da2888';
+const CACHE='ludchess-kids-23db5ca96f9c';
 const FILES=['./','./index.html','./manifest.webmanifest','./icono-192.png','./icono-512.png','./icono-180.png'];
 self.addEventListener('install',e=>e.waitUntil(caches.open(CACHE).then(c=>c.addAll(FILES)).then(()=>self.skipWaiting())));
 self.addEventListener('activate',e=>e.waitUntil(caches.keys().then(keys=>Promise.all(keys.filter(k=>k.startsWith('ludchess-kids-')&&k!==CACHE).map(k=>caches.delete(k)))).then(()=>self.clients.claim())));
