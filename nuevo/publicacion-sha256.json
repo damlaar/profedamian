@@ -1,0 +1,421 @@
+{
+  "revision": "5b4fe9ee9220",
+  "files": {
+    "flow/buho_animar.2b2aa3bd9db5.webp": {
+      "bytes": 385944,
+      "sha256": "2b2aa3bd9db5fb2323e56d93dbfbd3df5d6ca0b06270b72d641470fc9b502611"
+    },
+    "flow/buho_festejar.8d74b8252c98.webp": {
+      "bytes": 320296,
+      "sha256": "8d74b8252c981d33ff3f011ca434fe2b55068b3b4c89d4e2c0d6efdd8a832a60"
+    },
+    "flow/buho_hablar.9cf0f27d7ca4.webp": {
+      "bytes": 317732,
+      "sha256": "9cf0f27d7ca401186f67202a392f7aa77495fbbb47077b525e885fbc3c198677"
+    },
+    "flow/buho_pensar.f4a8983492db.webp": {
+      "bytes": 392136,
+      "sha256": "f4a8983492dbb82f422a611c90135094019f79a079d910bc1c0ed86b08d1861b"
+    },
+    "flow/buho_reposo.3fbb7799e775.webp": {
+      "bytes": 310466,
+      "sha256": "3fbb7799e7751058dcb4f459d4b0810e4b4ad167e0e5d3e206104415eb331d0a"
+    },
+    "flow/buho_saludar.d061b2835555.webp": {
+      "bytes": 338116,
+      "sha256": "d061b2835555fc5f01feba34191fedeab9797df744406242733b606a272e5177"
+    },
+    "flow/caracol_animar.276bdb79c212.webp": {
+      "bytes": 378942,
+      "sha256": "276bdb79c21204f3fd3eed18a79c52e64732f39edf2004f0294725b25af7ff52"
+    },
+    "flow/caracol_festejar.039508983afe.webp": {
+      "bytes": 387420,
+      "sha256": "039508983afefc456bb25cc4b6b38e2d3126134e9d743884b4c2d69dd0436c02"
+    },
+    "flow/caracol_hablar.3e1c1fc18399.webp": {
+      "bytes": 394456,
+      "sha256": "3e1c1fc1839943049267850a4e0b7d62b523a379cd536d36c1467548eac19175"
+    },
+    "flow/caracol_pensar.9db0fdee31e6.webp": {
+      "bytes": 390724,
+      "sha256": "9db0fdee31e6f7e6ebf6cd039b9aca12f9b6434e079a1cbadb811770df75d2cb"
+    },
+    "flow/caracol_reposo.43183581a5fa.webp": {
+      "bytes": 373722,
+      "sha256": "43183581a5fa3a5eea7bcb167e8d55614507ce8529ae6a6e131cece15da8eafd"
+    },
+    "flow/caracol_saludar.2df0e13c1887.webp": {
+      "bytes": 391100,
+      "sha256": "2df0e13c188733dd1b381235822d3332f489857d7483a3da1a27776256f25ede"
+    },
+    "flow/conejo_animar.4ab5a626d8b8.webp": {
+      "bytes": 368280,
+      "sha256": "4ab5a626d8b8b725ed4714ed193de9505a0ab77ee04e2c39d5058df399d6f92b"
+    },
+    "flow/conejo_festejar.680942440d6b.webp": {
+      "bytes": 361820,
+      "sha256": "680942440d6b092f9931404ea9927c1e271eabbf2f013293509f5cf574b32070"
+    },
+    "flow/conejo_hablar.08fb37069d12.webp": {
+      "bytes": 398634,
+      "sha256": "08fb37069d12ff1b129b9ecbceb127b0836a6b0f409f7052f3c55a5ed3f5966d"
+    },
+    "flow/conejo_pensar.d995fb468bba.webp": {
+      "bytes": 268218,
+      "sha256": "d995fb468bba80b315273e4e770980782ccc4ede1b16f7bac491a480f9cd0a9b"
+    },
+    "flow/conejo_reposo.33bc4e108e44.webp": {
+      "bytes": 319024,
+      "sha256": "33bc4e108e44001f1029756fc4a1cbbc963a20d5f6e218903622be09349b09fc"
+    },
+    "flow/conejo_saludar.641cbec974ff.webp": {
+      "bytes": 327702,
+      "sha256": "641cbec974ff4752f53459c6b4660656572ce4dc1145720073a44da9bcd46657"
+    },
+    "flow/hormiga_animar.1cfd406f1c47.webp": {
+      "bytes": 391238,
+      "sha256": "1cfd406f1c47a66bc35f2074a0b8e23bd9aa435307594de104b1c97863bf17f8"
+    },
+    "flow/hormiga_festejar.e7a4112c486a.webp": {
+      "bytes": 272306,
+      "sha256": "e7a4112c486aa9d4bad2c5ef6e8a3cc9045655fb191945f21493ec7b2a1e9f5e"
+    },
+    "flow/hormiga_hablar.9924ed01f0e5.webp": {
+      "bytes": 390704,
+      "sha256": "9924ed01f0e5fdfa72da180cb77e14446534525fefa3d43c9047442dc25f085f"
+    },
+    "flow/hormiga_pensar.57a83c976942.webp": {
+      "bytes": 367950,
+      "sha256": "57a83c9769426f5cf62ec0cb7a85a2136252226678aa7e98d1459cfbd39398d8"
+    },
+    "flow/hormiga_reposo.02d9892a7044.webp": {
+      "bytes": 366988,
+      "sha256": "02d9892a70440a9cbdd8a6cf26d299637ecad722b5ec2d727c613ef9ddeb0f42"
+    },
+    "flow/hormiga_saludar.4c7c7baece86.webp": {
+      "bytes": 367218,
+      "sha256": "4c7c7baece8627c02b3807ed506c1da1de49fbcde238c16498212ae4c388a0db"
+    },
+    "flow/leon_animar.127332f4d701.webp": {
+      "bytes": 368842,
+      "sha256": "127332f4d7014d494ca67bd1891ce16a6ccb2990c8173861f0680783e4f75912"
+    },
+    "flow/leon_festejar.194ca12d9791.webp": {
+      "bytes": 367094,
+      "sha256": "194ca12d97914a0d65532c2b723ecf69ef19ec83fd7342368f260bacee18f849"
+    },
+    "flow/leon_hablar.78f70d947d66.webp": {
+      "bytes": 380280,
+      "sha256": "78f70d947d66f5828e13927bf4c48d35b7980b47268c250a41efaeb2b369fa6e"
+    },
+    "flow/leon_pensar.2165fd7a9cd8.webp": {
+      "bytes": 370094,
+      "sha256": "2165fd7a9cd858fcf43cc329f28f9c7b276ad32c5bd95aaf522e2a729b04838a"
+    },
+    "flow/leon_reposo.309bc1bd413c.webp": {
+      "bytes": 352820,
+      "sha256": "309bc1bd413c5649df73318ff3027965776196d62afe79430f792b2ac7332203"
+    },
+    "flow/leon_saludar.4221c4b4ad84.webp": {
+      "bytes": 321902,
+      "sha256": "4221c4b4ad848e91701bd252d457c48db038e0d57a056f6248efa13cea82484b"
+    },
+    "flow/pato_animar.db41f275964b.webp": {
+      "bytes": 295378,
+      "sha256": "db41f275964bd16d82673dd723720700c8a27c5a72fe5b890e4c0feefda082ad"
+    },
+    "flow/pato_festejar.bf3b367381c6.webp": {
+      "bytes": 318940,
+      "sha256": "bf3b367381c67022db8ee67d8bc9ffab4adf20420ee34e183863cecc4adacada"
+    },
+    "flow/pato_hablar.915e1c79033e.webp": {
+      "bytes": 282504,
+      "sha256": "915e1c79033e425a45cc973a7af907c119661381727824202a63c9be3d046136"
+    },
+    "flow/pato_pensar.8deb29d84f4c.webp": {
+      "bytes": 284964,
+      "sha256": "8deb29d84f4c5e92d0ead56bfa405927996f2b1fd318f1ef427df8f02e3f2ffa"
+    },
+    "flow/pato_reposo.d98405f924e3.webp": {
+      "bytes": 351976,
+      "sha256": "d98405f924e3a08a433f6d4cff238a8ea1594b5980ad2293393046bbe1bd9dfb"
+    },
+    "flow/pato_saludar.0ca079847ebb.webp": {
+      "bytes": 287696,
+      "sha256": "0ca079847ebbe5ed0bd04665788a65304a4e20acf3ee45f915611089d0f197b2"
+    },
+    "flow/profe_damian_animar.07e3723f3592.webp": {
+      "bytes": 257730,
+      "sha256": "07e3723f3592abf449e424b477cd15f468a4a5362aecd67a9f87ac864b47de3a"
+    },
+    "flow/profe_damian_festejar.23983c257712.webp": {
+      "bytes": 281300,
+      "sha256": "23983c257712946cc672d1f9d55a7572eb0a63d3859a61382eba9b9576ee853f"
+    },
+    "flow/profe_damian_hablar.625c6e114061.webp": {
+      "bytes": 393686,
+      "sha256": "625c6e114061048bd2b4d4778d1ccdfac4532116c955d05e7de728b6191b6a64"
+    },
+    "flow/profe_damian_pensar.9996981343e7.webp": {
+      "bytes": 253062,
+      "sha256": "9996981343e76d302095aa8c150eab1c8e31fff34f9bca99c98d8cdd663bd3d6"
+    },
+    "flow/profe_damian_reposo.d3d4c87329bc.webp": {
+      "bytes": 291248,
+      "sha256": "d3d4c87329bcc677f18569676cd0534df9053d917262486393581368cf1eafa5"
+    },
+    "flow/profe_damian_saludar.a015cdda2348.webp": {
+      "bytes": 322258,
+      "sha256": "a015cdda23489b23948dcf370a913744714a9d576f28f85ba71c3b5816ea4df3"
+    },
+    "flow/profe_gaspar_animar.71b7c66dbc06.webp": {
+      "bytes": 391326,
+      "sha256": "71b7c66dbc061e1fe9b0662d065a7723d6421c89477ae344dc903563915ebb7a"
+    },
+    "flow/profe_gaspar_festejar.4eb93010abc9.webp": {
+      "bytes": 389050,
+      "sha256": "4eb93010abc911c13ee047753a5b3e457049dcfc28993fe8f1e358a94645a450"
+    },
+    "flow/profe_gaspar_hablar.884d1a588fdd.webp": {
+      "bytes": 373596,
+      "sha256": "884d1a588fdd42771baf5723a3b4ae2c3b936109b7e923ebdf9a937404056b03"
+    },
+    "flow/profe_gaspar_pensar.d2a4c29ecfc5.webp": {
+      "bytes": 348492,
+      "sha256": "d2a4c29ecfc53cec86153600453ce60f125cf6e790ee83297690f352e1391fb4"
+    },
+    "flow/profe_gaspar_reposo.50bb2f037bdb.webp": {
+      "bytes": 370406,
+      "sha256": "50bb2f037bdbdf422ab8dbb36ab852207c8dc66a1174da4ebaf173749717ad5f"
+    },
+    "flow/profe_gaspar_saludar.62c9ef186eb8.webp": {
+      "bytes": 376954,
+      "sha256": "62c9ef186eb829f6f886968e14fa5524dab9dd294d72166483ac9b2f94619520"
+    },
+    "flow/profe_horacio_animar.d13de8aed1fe.webp": {
+      "bytes": 334892,
+      "sha256": "d13de8aed1fe73cc2f855f6a2ee026e4dcb4a79dcd6816c231cd1f159502de7f"
+    },
+    "flow/profe_horacio_festejar.2dc9fe7ba74a.webp": {
+      "bytes": 345538,
+      "sha256": "2dc9fe7ba74a91726b528697e290d62a67c65a096e39c26d0a490fd052edd29c"
+    },
+    "flow/profe_horacio_hablar.5e31e7aa6b3f.webp": {
+      "bytes": 373792,
+      "sha256": "5e31e7aa6b3fe018fc6db307ab000a7f06a77887c5cf081643bb819fcad16055"
+    },
+    "flow/profe_horacio_pensar.8910ffeaa639.webp": {
+      "bytes": 318886,
+      "sha256": "8910ffeaa6396c488f8712cb098cf643e296968c858f8d0420d909bbbea07039"
+    },
+    "flow/profe_horacio_reposo.409b9a31b2ac.webp": {
+      "bytes": 349494,
+      "sha256": "409b9a31b2ac797f83cb4e4d91da89ead98cb6073509ed49ed5a588065612e4a"
+    },
+    "flow/profe_horacio_saludar.e4dfc71643b5.webp": {
+      "bytes": 336218,
+      "sha256": "e4dfc71643b529e8bdec80253c2c9dd31423a949822dcb06370f1170d97c5b9d"
+    },
+    "flow/profe_kiara_animar.a390aedd1035.webp": {
+      "bytes": 337996,
+      "sha256": "a390aedd10357f08e253576eea7cf5feafc89ca074f8c7a55eb363afd8a65837"
+    },
+    "flow/profe_kiara_festejar.cf38940e258b.webp": {
+      "bytes": 348622,
+      "sha256": "cf38940e258b090f948045e45d5d77005cbeab406be93764075cb67465ac13fa"
+    },
+    "flow/profe_kiara_hablar.1dddd260daf7.webp": {
+      "bytes": 330892,
+      "sha256": "1dddd260daf73fee9615ee0c2dcfc9dc8d042356dbbf9459e5bf11f57e8f638c"
+    },
+    "flow/profe_kiara_pensar.2c7b9c9c34b5.webp": {
+      "bytes": 328218,
+      "sha256": "2c7b9c9c34b59cc4a2bdfb1f98052f38b8d76c14ed0813a51cd3c9dff2bde51f"
+    },
+    "flow/profe_kiara_reposo.d99c64e07349.webp": {
+      "bytes": 339638,
+      "sha256": "d99c64e073491641ffa8c218470bce3b241e4b9bcfa606ee6d032bf28c25f1e4"
+    },
+    "flow/profe_kiara_saludar.31b134bb8327.webp": {
+      "bytes": 329062,
+      "sha256": "31b134bb832738e1b831a1940f3e058d0f4df2fb693522623ddcd6d1d0accb27"
+    },
+    "flow/profe_lola_animar.b17600d59cae.webp": {
+      "bytes": 336180,
+      "sha256": "b17600d59cae620a509f7e23c33b47fc7c1e398c7dc1434a0f28ef56298c1d43"
+    },
+    "flow/profe_lola_festejar.2efb0cee3646.webp": {
+      "bytes": 359108,
+      "sha256": "2efb0cee364606850bde4a9e47134cb972954d82ccb723f708c0c5eb6347abac"
+    },
+    "flow/profe_lola_hablar.e3279fcf3472.webp": {
+      "bytes": 346384,
+      "sha256": "e3279fcf347233220b456ca4209db45ad86eea29e9a4dd38bead4745a564b105"
+    },
+    "flow/profe_lola_pensar.ef08535c7086.webp": {
+      "bytes": 329168,
+      "sha256": "ef08535c708602950267010860e2c5c583b98dd675da3d858ce4a0b8c1c6ffa0"
+    },
+    "flow/profe_lola_reposo.2cc23d18a02c.webp": {
+      "bytes": 347232,
+      "sha256": "2cc23d18a02c0d5bd33c73c112497adff55f6e564126f1ba1ab6246c8fc9b048"
+    },
+    "flow/profe_lola_saludar.6c3da98be8dd.webp": {
+      "bytes": 357974,
+      "sha256": "6c3da98be8dd2dd18c2836e11864f8288221ad25b8885fc3919fe5fd77bd9112"
+    },
+    "flow/profe_marta_animar.ab59afee6a64.webp": {
+      "bytes": 286274,
+      "sha256": "ab59afee6a64ee4713e00f813b3658d83f6159e30325c706b4249088348159c6"
+    },
+    "flow/profe_marta_festejar.fa4d8e9e30e6.webp": {
+      "bytes": 295604,
+      "sha256": "fa4d8e9e30e65a5f03c89effe9ce81dce49bf3015b6ee681f215599100408cab"
+    },
+    "flow/profe_marta_hablar.1823af412469.webp": {
+      "bytes": 287164,
+      "sha256": "1823af4124699b458e5d7054f57415b4ceca3bce2cb4ec14e419afef7fe40de8"
+    },
+    "flow/profe_marta_pensar.3e6c8a5a61a6.webp": {
+      "bytes": 276882,
+      "sha256": "3e6c8a5a61a6b0799d9d2ba8ddcba346d1b562113243afe4eebc8cd9b10d14bf"
+    },
+    "flow/profe_marta_reposo.96956189f783.webp": {
+      "bytes": 270968,
+      "sha256": "96956189f783d4f5108ea1b3cf32da593dae1d3d9170ddeaee0ab656fc35ea3f"
+    },
+    "flow/profe_marta_saludar.8ddd1c228dc7.webp": {
+      "bytes": 286618,
+      "sha256": "8ddd1c228dc78f4ad17822f492b04d09d32ee3533d1c2cb9328cf280b098f579"
+    },
+    "flow/profe_ramiro_animar.203a42d97cf7.webp": {
+      "bytes": 384152,
+      "sha256": "203a42d97cf703c54a5a9e6644fe23b1c3fbeeb2e36448d286c3b87db0d31c53"
+    },
+    "flow/profe_ramiro_festejar.908fb8035c2d.webp": {
+      "bytes": 344456,
+      "sha256": "908fb8035c2d2f2562277a3873f99d4b7dd97c83de3344b04d1bf60862c59da5"
+    },
+    "flow/profe_ramiro_hablar.b586dec845d5.webp": {
+      "bytes": 331734,
+      "sha256": "b586dec845d52bfb4f2003e75d204347821c03044980bf6140174bc91df7a455"
+    },
+    "flow/profe_ramiro_pensar.26af525fb1d6.webp": {
+      "bytes": 381468,
+      "sha256": "26af525fb1d6f55f1b2493f6e185212b3e8bc0b82334524195775e8145b01123"
+    },
+    "flow/profe_ramiro_reposo.5e4298b18e0f.webp": {
+      "bytes": 384510,
+      "sha256": "5e4298b18e0f31ce78e680a10c336b499271b5794768e4725b558762af49e486"
+    },
+    "flow/profe_ramiro_saludar.eaa8a198c2f5.webp": {
+      "bytes": 378988,
+      "sha256": "eaa8a198c2f582b17c5718d3991086d1ae4c45ee8ec3ba6f25af2a1d1ed8ff1a"
+    },
+    "flow/profe_sol_animar.3e6aaddf997f.webp": {
+      "bytes": 352370,
+      "sha256": "3e6aaddf997f8a7526c1111f77ff4ce6a23cd6c8097e81a45e4ff6b6dea67c21"
+    },
+    "flow/profe_sol_festejar.b92e68743acc.webp": {
+      "bytes": 390068,
+      "sha256": "b92e68743acc13f4369df83eb486cffc9d30c5330e4478f9c1a414600640bd07"
+    },
+    "flow/profe_sol_hablar.b049af8013ec.webp": {
+      "bytes": 378330,
+      "sha256": "b049af8013ecd229e7061148e1a3044838497d2b7b49dd0dcf1db4edcf35a34c"
+    },
+    "flow/profe_sol_pensar.263ede4403ad.webp": {
+      "bytes": 359348,
+      "sha256": "263ede4403ad6d119be4f6ffa969cd4aab12b2149d9e1fa2ccd5efd93319d3d3"
+    },
+    "flow/profe_sol_reposo.817f39a06615.webp": {
+      "bytes": 355962,
+      "sha256": "817f39a066157af354218ff479abbacb98d16759aebe56813120bde6541395b7"
+    },
+    "flow/profe_sol_saludar.e70305328435.webp": {
+      "bytes": 384980,
+      "sha256": "e7030532843588abd42e2b471cbb87e95dd29c9c0dc3c78b9d417ddcd40bd284"
+    },
+    "flow/tortuga_animar.de7c2d8bb6ee.webp": {
+      "bytes": 350936,
+      "sha256": "de7c2d8bb6ee26478dc03e939f807fc55757b110064d0f38ae59fedf2bf583f3"
+    },
+    "flow/tortuga_festejar.539b5470be01.webp": {
+      "bytes": 360378,
+      "sha256": "539b5470be01025cbf30426f10b532e5337edbb7511618028a3a156e6ecc62a2"
+    },
+    "flow/tortuga_hablar.36f038ece997.webp": {
+      "bytes": 369712,
+      "sha256": "36f038ece9974feaf6b548052df03da782f933392b4f0b120dc768cf9a64d0ef"
+    },
+    "flow/tortuga_pensar.e6640975ec23.webp": {
+      "bytes": 354970,
+      "sha256": "e6640975ec23ff3b63cf06544f5990ac8bae54622a9fc1a4578552108d91d9fb"
+    },
+    "flow/tortuga_reposo.9da2566ffef8.webp": {
+      "bytes": 357058,
+      "sha256": "9da2566ffef895735ea8618c739e4901e3488918532fbc6bd7edcfbff45416e9"
+    },
+    "flow/tortuga_saludar.824e1093af1b.webp": {
+      "bytes": 350062,
+      "sha256": "824e1093af1b41c76fd05e18d950fae4d6994941c7927373a83b7b779c49e8ea"
+    },
+    "flow/zorro_animar.3f2c5caeb144.webp": {
+      "bytes": 338710,
+      "sha256": "3f2c5caeb1445487cd7b680310432137caa1c374bb87fca0f7163dcfe9a2e15a"
+    },
+    "flow/zorro_festejar.ec66dcdf9138.webp": {
+      "bytes": 343806,
+      "sha256": "ec66dcdf91386f28c5f917f4a40ede4e7b106a0234b3c8934544f4d1cceba347"
+    },
+    "flow/zorro_hablar.fc61e47b158c.webp": {
+      "bytes": 351044,
+      "sha256": "fc61e47b158c023360fca7dd5b699768a825dbd3c8520171d5192aac6da5cd0a"
+    },
+    "flow/zorro_pensar.37b602db0f24.webp": {
+      "bytes": 345088,
+      "sha256": "37b602db0f24c2b730592c61507aefb1fa87826f2cdcd2e54b5536a934f5eb4b"
+    },
+    "flow/zorro_reposo.8fbb9d483684.webp": {
+      "bytes": 337036,
+      "sha256": "8fbb9d483684fc92704b595fefa7f9f14c5862ab62a7d925aa297f57ddc0c201"
+    },
+    "flow/zorro_saludar.914773e7f9c9.webp": {
+      "bytes": 356920,
+      "sha256": "914773e7f9c9d81429e3f646a0bd35b35fe126102a1f7fe6f5e54296e617cfaf"
+    },
+    "icono-180.png": {
+      "bytes": 969,
+      "sha256": "f78625f7a6bb0391296e79f92f2a05f0a68b53ef5da17a22e58f4bc60ae4075b"
+    },
+    "icono-192.png": {
+      "bytes": 1060,
+      "sha256": "37f080b6a9970ecaad3ab43c4fc819e1f0325f629467ea8b135cf3cbca50aa5b"
+    },
+    "icono-512.png": {
+      "bytes": 4014,
+      "sha256": "23ab57914e75e0e6a0d93c0ce2113d60c5d258aeeb500786a066678d37ea7142"
+    },
+    "index.html": {
+      "bytes": 10574734,
+      "sha256": "8cfab975d5a7a89bbae30dbda4a2a15b60aeeac45fff3526c0cc834c3e23982e"
+    },
+    "ludchess-kids.html": {
+      "bytes": 10574575,
+      "sha256": "40175c02f5446707cad88b6483306ecb094d6b01408ad5b471d4835b48d7a5df"
+    },
+    "manifest.webmanifest": {
+      "bytes": 463,
+      "sha256": "3f3c5a2c9235a57561c5eac86462ac556623fdd22a7ed9421ed8b20c772f6cbd"
+    },
+    "recursos.json": {
+      "bytes": 22480,
+      "sha256": "6aa612aba419b8c258c89c048e8d039fa547ec49e169977f68ec31ffabb877f6"
+    },
+    "sw.js": {
+      "bytes": 19579,
+      "sha256": "ad0ee5bc6b627b69748fe3edc76324cabdde320d3ed251e16a090ef9002448d5"
+    }
+  }
+}
