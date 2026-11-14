@@ -1,5 +1,5 @@
 {
-  "revision": "5b4fe9ee9220",
+  "revision": "7938013b879e",
   "files": {
     "flow/buho_animar.2b2aa3bd9db5.webp": {
       "bytes": 385944,
@@ -414,8 +414,8 @@
       "sha256": "6aa612aba419b8c258c89c048e8d039fa547ec49e169977f68ec31ffabb877f6"
     },
     "sw.js": {
-      "bytes": 19579,
-      "sha256": "ad0ee5bc6b627b69748fe3edc76324cabdde320d3ed251e16a090ef9002448d5"
+      "bytes": 19547,
+      "sha256": "1f1c7ee376092ca3d1d218803ea54143a30f6b72a52c46721965953e812e6d7d"
     }
   }
 }
