@@ -1,5 +1,5 @@
 {
-  "revision": "678d7c304422",
+  "revision": "c1568ea0c8c2",
   "files": {
     "flow/buho_animar.2b2aa3bd9db5.webp": {
       "bytes": 385944,
@@ -398,12 +398,12 @@
       "sha256": "23ab57914e75e0e6a0d93c0ce2113d60c5d258aeeb500786a066678d37ea7142"
     },
     "index.html": {
-      "bytes": 13067383,
-      "sha256": "9f3d83e58fdb380cb75d6354652150b3bdef4fcedfdd9d427a055629bab3cb32"
+      "bytes": 13078038,
+      "sha256": "bb88d6d7fd46818160b3c758c60fdd9aa8176c384ed2792604e23dc0648ae142"
     },
     "ludchess-kids.html": {
-      "bytes": 13067224,
-      "sha256": "2e7774ca074c7f5bb5050df24a738c53d3edd889c6a40113a2b274caec7daf88"
+      "bytes": 13077879,
+      "sha256": "0d632353894a3c11898fc7cfd40817ac00f2044d1816bbe3d88d5ccf091c1de9"
     },
     "manifest.webmanifest": {
       "bytes": 463,
@@ -415,7 +415,7 @@
     },
     "sw.js": {
       "bytes": 19547,
-      "sha256": "65c18decdfe856e9cff5d135e40c19232d7d51064cc202feba137759ebb1cd3b"
+      "sha256": "abb8c8022eb0c39bcd73398517c2b295c21776f7cc1ab4b32ebb7de650096ded"
     }
   }
 }
